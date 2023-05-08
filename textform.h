@@ -2,6 +2,9 @@
 #define TEXTFORM_H
 
 #include <QWidget>
+#include <QFileDialog>
+#include "Highlighter.h"
+
 
 namespace Ui {
 class TextForm;
@@ -13,10 +16,19 @@ class TextForm : public QWidget
 
 public:
     explicit TextForm(QWidget *parent = nullptr);
-    ~TextForm();
-
-private:
+    QString GetCurrentText();
+    void ClearTextForm();
+    void SetText(QString text);
+    void CutMove();
+    void CopyMove();
+    void PasteMove();
     Ui::TextForm *ui;
+    bool wasSavedAs = false;
+    QString currentFile = "";
+    ~TextForm();
+private:
+    QString lastSavedText = "";
+    Highlighter* highlighter;
 };
 
 #endif // TEXTFORM_H

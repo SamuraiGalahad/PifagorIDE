@@ -25,6 +25,9 @@ set(PROJECT_SOURCES
         textform.cpp
         textform.h
         textform.ui
+        QSourceHighlite.pri
+        Highlighter.h
+        Highlighter.cpp
         ${TS_FILES}
 )
 

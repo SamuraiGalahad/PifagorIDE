@@ -14,21 +14,41 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="1" colspan="2">
+     <widget class="QTabWidget" name="tabWidget_2">
+      <widget class="QWidget" name="tab_9">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_10">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="2">
      <widget class="QTreeView" name="treeView">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>305</width>
+        <height>0</height>
+       </size>
       </property>
       <attribute name="headerCascadingSectionResizes">
        <bool>true</bool>
       </attribute>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1" colspan="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>-1</number>
@@ -71,6 +91,7 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionChange_File_Tree_Visibility"/>
     <addaction name="actionFunctions"/>
     <addaction name="actionWork"/>
    </widget>
@@ -88,6 +109,7 @@
     <property name="title">
      <string>Window</string>
     </property>
+    <addaction name="actionNew_Window"/>
     <addaction name="actionClose"/>
     <addaction name="actionClose_All"/>
     <addaction name="actionTile"/>
@@ -235,6 +257,16 @@
   <action name="actionDocs">
    <property name="text">
     <string>Docs</string>
+   </property>
+  </action>
+  <action name="actionChange_File_Tree_Visibility">
+   <property name="text">
+    <string>Change File Tree Visibility</string>
+   </property>
+  </action>
+  <action name="actionNew_Window">
+   <property name="text">
+    <string>New Window</string>
    </property>
   </action>
  </widget>
