@@ -28,6 +28,60 @@ set(PROJECT_SOURCES
         QSourceHighlite.pri
         Highlighter.h
         Highlighter.cpp
+        libPifagorTrans.a
+        mythread.h
+        mythread.cpp
+
+        Resource.qrc
+# Транслятор
+#        QTTranslator/ArgScaner.cpp
+#        QTTranslator/ArgScaner.h
+#        QTTranslator/ArgTranslator.cpp
+#        QTTranslator/ArgTranslator.h
+#        QTTranslator/Atom.cpp
+#        QTTranslator/Atom.h
+#        QTTranslator/AtomFishka.cpp
+#        QTTranslator/AtomFishka.h
+#        QTTranslator/Block.cpp
+#        QTTranslator/Block.h
+#        QTTranslator/Exeption.cpp
+#        QTTranslator/Expression.h
+#        QTTranslator/Fishka.cpp
+#        QTTranslator/Fishka.h
+#        QTTranslator/Function.cpp
+#        QTTranslator/Function.h
+#        QTTranslator/GeneralObject.cpp
+#        QTTranslator/GeneralObject.h
+#        QTTranslator/Identifier.cpp
+#        QTTranslator/Identifier.h
+#        QTTranslator/Interface.cpp
+#        QTTranslator/Interface.h
+#        QTTranslator/Interpretator.cpp
+#        QTTranslator/Interpretator.h
+#        QTTranslator/KeyWord.cpp
+#        QTTranslator/KeyWord.h
+#        QTTranslator/List.cpp
+#        QTTranslator/List.h
+#        QTTranslator/ListFishka.cpp
+#        QTTranslator/ListFishka.h
+#        QTTranslator/ObjectFishka.cpp
+#        QTTranslator/ObjectFishka.h
+#        QTTranslator/Precompiled.cpp
+#        QTTranslator/Precompiled.h
+#        QTTranslator/Program.cpp
+#        QTTranslator/Program.h
+#        QTTranslator/Scaner.cpp
+#        QTTranslator/Scaner.h
+#        QTTranslator/SignalFishka.cpp
+#        QTTranslator/SignalFishka.h
+#        QTTranslator/Term.cpp
+#        QTTranslator/Term.h
+#        QTTranslator/Translator.cpp
+#        QTTranslator/Translator.h
+#        QTTranslator/Types.cpp
+#        QTTranslator/Types.h
+#        QTTranslator/WrapFishka.cpp
+#        QTTranslator/WrapFishka.h
         ${TS_FILES}
 )
 
@@ -58,7 +112,9 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(Pifagor_IDE PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(Pifagor_IDE PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${CMAKE_CURRENT_LIST_DIR}/libPifagorTrans.a)
+
+# target_link_libraries(Pifagor_IDE PRIVATE build-trans-Desktop-Debug/libPifagorTrans.a)
 
 set_target_properties(Pifagor_IDE PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

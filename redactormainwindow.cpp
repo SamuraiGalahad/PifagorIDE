@@ -2,6 +2,8 @@
 #include "ui_redactormainwindow.h"
 #include "textform.h"
 #include "ui_textform.h"
+#include "mythread.h"
+#include "QTTranslator/Interface.h"
 
 extern "C" void* oiTranslate(char* FName, char* Err,int& rez);
 extern "C" void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
@@ -25,12 +27,46 @@ RedactorMainWindow::RedactorMainWindow(QWidget *parent) :
     ui->treeView->setRootIndex(dirmodel->setRootPath(sPath));
     for (int i = 1; i < dirmodel->columnCount(); ++i)
         ui->treeView->hideColumn(i);
+
+ //   linkLib();
+
+    initWorkTabWidget();
+    runThread = new MyThread;
+
+    rez = true;
+    Err=new char[1000];
+    output=new char[1000000];
 }
 
 RedactorMainWindow::~RedactorMainWindow()
 {
     delete ui;
 }
+
+void RedactorMainWindow::initWorkTabWidget() {
+    ui->tabWidget_2->addTab((new QTextEdit()), "Translate");
+    ui->tabWidget_2->setCurrentIndex(0);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setReadOnly(true);
+    ui->tabWidget_2->addTab(new QTextEdit(), "Debug");
+    ui->tabWidget_2->setCurrentIndex(1);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setReadOnly(true);
+    ui->tabWidget_2->addTab(new QTextEdit(), "Arguments");
+    ui->tabWidget_2->addTab(new QTextEdit(), "Excecute");
+    ui->tabWidget_2->setCurrentIndex(3);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setReadOnly(true);
+    ui->tabWidget_2->setCurrentIndex(0);
+}
+
+//void RedactorMainWindow::linkLib() {
+//    translate = oiTranslate;
+//    retFuncList = oiRetFuncList;
+//    argTranslate = oiArgTranslate;
+//    interpretate = oiInterp;
+//    makeStep = oiMakeStep;
+//    breakWork = oiBreakWork;
+//    getCurResult = oiGetCurResult;
+//    setStrBuffer = oiSetDataBuffer;
+//}
 
 void RedactorMainWindow::on_actionNew_triggered()
 {
@@ -39,7 +75,11 @@ void RedactorMainWindow::on_actionNew_triggered()
 
 void RedactorMainWindow::on_tabWidget_tabCloseRequested(int index)
 {
+    if (!maybeSave()) {
+        return;
+    }
     ui->tabWidget->removeTab(index);
+
 }
 
 void RedactorMainWindow::on_actionChange_File_Tree_Visibility_triggered()
@@ -133,7 +173,7 @@ void RedactorMainWindow::on_actionPaste_triggered()
     tf->PasteMove();
 }
 
-void RedactorMainWindow::maybeSave() {
+bool RedactorMainWindow::maybeSave() {
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     if (tf->ui->plainTextEdit->document()->isModified()) {
         QMessageBox::StandardButton r;
@@ -146,8 +186,212 @@ void RedactorMainWindow::maybeSave() {
             } else {
                 on_actionSave_as_triggered();
             }
+            return true;
+        } else if (r == QMessageBox::Discard) {
+            return true;
+        } else {
+            return false;
         }
-
     }
+    return true;
 }
 
+
+// Транслятор
+
+//void RedactorMainWindow::Translate()
+//{
+//    debug=false;
+//    char* Err=new char[1000];
+//    QString rez="";
+//    int num;
+
+//    transEdit->clear();
+
+//    clearList();
+
+//    if(!this->save())
+//    {
+//        rez = "Please, save file before\n";
+//    }
+//    else
+//    {
+//        rez = QString("Translating %1...\n").arg((this->curFile));
+//        mModule = translate(MakeCharMas(this->curFile),Err,num);
+//        if(num>0)
+//        {
+//            rez += QString("Error in line number %1: %2\n").arg(num).arg(Err);
+//            this->setTranslated(false);
+//        }
+//        else
+//        {
+//            rez += QString("Translation complete\n%1 lines translated\n").arg(-num);
+//            this->setTranslated(true);
+//            fillList();
+//        }
+//    }
+//    transEdit->setText(rez);
+//    workTab->setCurrentWidget(transEdit);
+//}
+
+
+
+//void RedactorMainWindow::Execute()
+//{
+//    debug=false;
+//    DebugOrExecute();
+//    rezEdit->setText(tr(getCurResult()));
+//    //workTab->setCurrentIndex(3);    // Установка активным таба результатов
+//    workTab->setCurrentWidget(rezEdit);    // Установка активным таба результатов
+//}
+
+//void RedactorMainWindow::BreakExecute()
+//{
+//    isBroken=true;
+//    breakWork();
+//}
+
+//void RedactorMainWindow::Debug()
+//{
+//    workTab->setCurrentWidget(debugEdit);    // Установка активным отладочного таба
+//    /// Debug Info
+//    ///qDebug() << "Debug(): debug = " << (debug? "true":"false");
+
+//    if(debug)   // Отладка уже идет. Продолжаем...
+//    {
+//        makeStep();
+//        /// Debug Info
+//        ///qDebug() << "Debug(): WaitForSignal = false";
+//    }
+//    else    //if(!debug)    // Отладка только началась. Запускаем интерпретатор...
+//    {
+//        // Вытаскиваются аргумент и текущая функция
+//        ///QString tmpStr = argEdit->toPlainText() + " : " + funcList->currentItem()->text();
+//        ///const char* tmpStrBuf = tmpStr.toLocal8Bit().data();
+//        /// Debug Info
+//        ///qDebug() << "Debug(): tmpStr = " << tmpStr;
+//        //debugEdit->setText(tmpStr);
+//        ///setStrBuffer(tmpStrBuf);
+//        // Очистка таба результатов. Его подготовка к получению результата
+//        rezEdit->clear();
+
+//        debug=true;
+//        // Запуск интерпретатора
+//        DebugOrExecute();
+//    }
+//    debugEdit->setText(tr(getCurResult())); // Выдается в отладочное окно результат очередного шага.
+//    // Фокус смещается на последнюю позицию
+//    QTextCursor c = debugEdit->textCursor();
+//    c.movePosition(QTextCursor::End);
+//    debugEdit->setTextCursor(c);
+//}
+
+//void RedactorMainWindow::BreakDebug()
+//{
+//    isBroken=true;
+//    breakWork();
+//    // Очистка отладочного окна
+//    debugEdit->clear();
+//}
+
+//void RedactorMainWindow::DebugOrExecute()
+//{
+//    QString curFuncName;
+//    QString argName;
+//    bool rez;
+
+//    char *Err=new char[1000];
+
+//    if(funcList->currentRow()==-1)
+//    {
+//        QMessageBox::warning(this, tr("Error"), tr("Please, select a function"));
+//        return;
+//    }
+//    // Из таба вытаскивается текущая функция
+//    curFuncName=funcList->currentItem()->text();
+
+//    // Очистка таба результатов. Его подготовка к получению результата
+//    rezEdit->clear();
+
+//    // ВЫтаскивается из редактора аргумент
+//    argName = argEdit->toPlainText();
+
+//    if(argName.count()>0)
+//    {
+//        mInFishka = argTranslate(mModule, MakeCharMas(argName), Err, rez);
+//        if(!rez)
+//        {
+//            QMessageBox::warning(this,tr("Argument interpretating error!"),tr(Err));
+//            return;
+//        }
+//    }
+//    else
+//    {
+//        if(funcList->currentRow()==0)
+//        {
+//            QMessageBox::warning(this,tr("Argument interpretating error!"),tr("Empty argument string"));
+//            return;
+//        }
+//    }
+//    /// !!! Debug Info...
+//    ///qDebug()<< "qDebug(): Succeful argument parsing. Arg = " << argName << " Func = " << curFuncName;
+
+//    run(mInFishka, curFuncName, debug);
+//    return;
+//}
+
+//void RedactorMainWindow::run(void *inFishka, QString name, bool trace)
+//{
+
+//    //output=interpretate(inFishka, mModule, MakeCharMas(name), Err, rez, trace);
+
+//    /// Новый вариант run, использующий только запуск интерпретатора
+//    /// без обращения к главному окну и его компонентам
+//    runThread->Set(interpretate, inFishka, mModule, MakeCharMas(name), Err, rez, trace);
+//    runThread->start();
+//}
+
+//// Слот, обеспечивающий реакцию на завершение потока
+//void RedactorMainWindow::ThreadFinshed() {
+//    output = runThread->GetOutput();
+//    rez = runThread->GetRez();
+//    trace = runThread->GetTrace();
+
+//    if(rez)
+//    {
+//        if(trace)
+//        {
+//            //debugTextFromThread=tr(output);
+//            //SetRez(2);
+//            debugEdit->setText(tr(getCurResult()));
+//            workTab->setCurrentWidget(debugEdit);
+//            // Фокус смещается на последнюю позицию
+//            QTextCursor c = debugEdit->textCursor();
+//            c.movePosition(QTextCursor::End);
+//            debugEdit->setTextCursor(c);
+//            // Чтобы не начать по новой, используется отвлечение внимания диалоговым окном.
+//            QMessageBox::information(this,"Debugging","Debugging has been Completed!");
+//        }
+//        else
+//        {
+//            //execTextFromThread=tr(output);
+//            //SetRez(3);
+//            rezEdit->setText(tr(getCurResult()));
+//            workTab->setCurrentWidget(rezEdit);
+
+//        }
+//    }
+//    else
+//    {
+//        if(!(isBroken)) {
+//            QMessageBox::warning(this,"Execution error!", tr(Err));
+//        }
+//        else
+//        {
+//            QMessageBox::warning(this,"Execution interrupted!", "Programm execution interrupted by user's request");
+//        }
+//    }
+//    SetFlagsFalse();
+//    //QMessageBox::warning(this,"Completed!","Completed!");
+//    return;
+//}

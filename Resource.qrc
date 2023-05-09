@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/rec">
+        <file>Images/18624802281582793672-128.png</file>
+        <file>Images/20322505631679820485-128.png</file>
+        <file>Images/3227752181626677569-128.png</file>
+        <file>Images/8403831151582545584-128.png</file>
+        <file>Images/free_icon_1-2.svg</file>
+    </qresource>
+</RCC>
