@@ -40,6 +40,7 @@ public:
     void SetRez(int num);
     void SetFlagsFalse();
     void setTranslated(bool data);
+    void openFile(QString filename);
     bool isBroken;
     QWidget* par;
 
@@ -90,6 +91,10 @@ private slots:
     void on_actionNext_step_triggered();
 
     void on_actionCascade_triggered();
+
+    void on_treeView_doubleClicked(const QModelIndex &index);
+
+ //   void on_treeView_clicked(const QModelIndex &index);
 
 private:
     Ui::RedactorMainWindow *ui;

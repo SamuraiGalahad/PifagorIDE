@@ -24,6 +24,9 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTreeView" name="treeView">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -41,6 +44,9 @@
          <width>500</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="tabKeyNavigation">
+        <bool>true</bool>
        </property>
        <attribute name="headerCascadingSectionResizes">
         <bool>true</bool>

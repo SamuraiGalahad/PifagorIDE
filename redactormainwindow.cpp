@@ -23,6 +23,11 @@ RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     ui->tabWidget->addTab(new TextForm(), "main.pyf");
     QString sPath = "/Users/nikolajparahin/Documents";
     dirmodel = new QFileSystemModel(this);
+    QStringList filters;
+    filters << "*.pfg";
+    QStringList l = dirmodel->rootDirectory().entryList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
+    filters += l;
+    dirmodel->setNameFilters(filters);
     dirmodel->setReadOnly(false);
     ui->treeView->setModel(dirmodel);
     ui->treeView->setRootIndex(dirmodel->setRootPath(sPath));
@@ -104,9 +109,7 @@ QString RedactorMainWindow::getTextFromCurrentTab() {
     return tf->GetCurrentText();
 }
 
-void RedactorMainWindow::on_actionOpen_triggered()
-{
-    QString filename = QFileDialog::getOpenFileName(this, "Open the file");
+void RedactorMainWindow::openFile(QString filename) {
     QFile file(filename);
     currentFile = filename;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
@@ -118,6 +121,12 @@ void RedactorMainWindow::on_actionOpen_triggered()
     QString text = in.readAll();
     tf->SetText(text);
     file.close();
+}
+
+void RedactorMainWindow::on_actionOpen_triggered()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Open the file");
+    openFile(filename);
 }
 
 void RedactorMainWindow::on_actionSave_as_triggered()
@@ -447,13 +456,19 @@ void RedactorMainWindow::on_actionAbout_triggered()
 
 void RedactorMainWindow::on_actionGo_up_triggered()
 {
-
+    QDir current_dir = dirmodel->rootDirectory();
+    current_dir.cdUp();
+    ui->treeView->setRootIndex(dirmodel->setRootPath(current_dir.absolutePath()));
 }
 
 
 void RedactorMainWindow::on_actionChoose_dir_triggered()
 {
-
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                    dirmodel->rootDirectory().absolutePath(),
+                                                    QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks);
+    ui->treeView->setRootIndex(dirmodel->setRootPath(dir));
 }
 
 
@@ -522,4 +537,20 @@ void RedactorMainWindow::closeEvent(QCloseEvent *event) {
         par->close();
     }
 }
+
+
+void RedactorMainWindow::on_treeView_doubleClicked(const QModelIndex &index) {
+    QString path = dirmodel->fileInfo(index).absoluteFilePath();
+    if (dirmodel->isDir(index)) {
+        ui->treeView->setRootIndex(dirmodel->setRootPath(path));
+    } else {
+        openFile(path);
+    }
+}
+
+//void RedactorMainWindow::on_treeView_clicked(const QModelIndex &index)
+//{
+//    QString path = dirmodel->fileInfo(index).absoluteFilePath();
+//    ui->treeView->setRootIndex(dirmodel->setRootPath(path));
+//}
 
