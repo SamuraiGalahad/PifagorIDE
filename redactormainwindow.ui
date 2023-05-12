@@ -76,14 +76,17 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QTabWidget" name="tabWidget_2">
-              <property name="currentIndex">
-               <number>-1</number>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="topMargin">
+               <number>0</number>
               </property>
-              <property name="tabsClosable">
-               <bool>false</bool>
-              </property>
-             </widget>
+              <item>
+               <widget class="QComboBox" name="comboBox"/>
+              </item>
+              <item>
+               <widget class="QTabWidget" name="tabWidget_2"/>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -101,12 +104,12 @@
      <x>0</x>
      <y>0</y>
      <width>931</width>
-     <height>22</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Файл</string>
+     <string>File</string>
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -127,8 +130,6 @@
      <string>View</string>
     </property>
     <addaction name="actionChange_File_Tree_Visibility"/>
-    <addaction name="actionFunctions"/>
-    <addaction name="actionWork"/>
    </widget>
    <widget class="QMenu" name="menuProgram">
     <property name="title">
@@ -138,6 +139,7 @@
     <addaction name="actionExecute"/>
     <addaction name="actionBreak_execution"/>
     <addaction name="actionDebug"/>
+    <addaction name="actionNext_step"/>
     <addaction name="actionBreak_Debug"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -147,12 +149,7 @@
     <addaction name="actionNew_Window"/>
     <addaction name="actionClose"/>
     <addaction name="actionClose_All"/>
-    <addaction name="actionTile"/>
     <addaction name="actionCascade"/>
-    <addaction name="actionArrange_icons"/>
-    <addaction name="actionNext"/>
-    <addaction name="actionPrevious"/>
-    <addaction name="actionList"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -161,12 +158,20 @@
     <addaction name="actionAbout"/>
     <addaction name="actionDocs"/>
    </widget>
+   <widget class="QMenu" name="menuFile_Tree">
+    <property name="title">
+     <string>File Tree</string>
+    </property>
+    <addaction name="actionGo_up"/>
+    <addaction name="actionChoose_dir"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuProgram"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuFile_Tree"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -174,7 +179,7 @@
     <string>toolBar</string>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
@@ -338,6 +343,21 @@
   <action name="actionNew_Window">
    <property name="text">
     <string>New Window</string>
+   </property>
+  </action>
+  <action name="actionGo_up">
+   <property name="text">
+    <string>Go up</string>
+   </property>
+  </action>
+  <action name="actionChoose_dir">
+   <property name="text">
+    <string>Choose dir</string>
+   </property>
+  </action>
+  <action name="actionNext_step">
+   <property name="text">
+    <string>Next step</string>
    </property>
   </action>
  </widget>

@@ -17,7 +17,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    redactor = new RedactorMainWindow;
+    redactor = new RedactorMainWindow(this);
     redactor->show();
     this->hide();
 }

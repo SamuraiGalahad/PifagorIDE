@@ -28,7 +28,7 @@ class RedactorMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RedactorMainWindow(QWidget *parent = nullptr);
+    explicit RedactorMainWindow(QWidget* at = nullptr, QWidget *parent = nullptr);
     ~RedactorMainWindow();
 
     QString debugTextFromThread;
@@ -41,6 +41,10 @@ public:
     void SetFlagsFalse();
     void setTranslated(bool data);
     bool isBroken;
+    QWidget* par;
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void on_actionNew_triggered();
@@ -62,6 +66,30 @@ private slots:
     void on_actionCopy_triggered();
 
     void on_actionPaste_triggered();
+
+    void on_actionClose_triggered();
+
+    void on_actionClose_All_triggered();
+
+    void on_actionAbout_triggered();
+
+    void on_actionGo_up_triggered();
+
+    void on_actionChoose_dir_triggered();
+
+    void on_actionTranslate_triggered();
+
+    void on_actionExecute_triggered();
+
+    void on_actionBreak_execution_triggered();
+
+    void on_actionDebug_triggered();
+
+    void on_actionBreak_Debug_triggered();
+
+    void on_actionNext_step_triggered();
+
+    void on_actionCascade_triggered();
 
 private:
     Ui::RedactorMainWindow *ui;

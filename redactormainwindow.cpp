@@ -4,6 +4,7 @@
 #include "ui_textform.h"
 #include "mythread.h"
 #include "QTTranslator/Interface.h"
+#include "mainwindow.h"
 
 extern "C" void* oiTranslate(char* FName, char* Err,int& rez);
 extern "C" void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
@@ -14,7 +15,7 @@ extern "C" char* oiGetCurResult();
 extern "C" void  oiBreakWork();
 extern "C" void  oiSetDataBuffer(const char* cStrValue);
 
-RedactorMainWindow::RedactorMainWindow(QWidget *parent) :
+RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::RedactorMainWindow)
 {
@@ -29,7 +30,8 @@ RedactorMainWindow::RedactorMainWindow(QWidget *parent) :
         ui->treeView->hideColumn(i);
 
  //   linkLib();
-
+    this->par = ap;
+    ((MainWindow*)par)->all_windows.push_back(this);
     initWorkTabWidget();
     runThread = new MyThread;
 
@@ -70,7 +72,7 @@ void RedactorMainWindow::initWorkTabWidget() {
 
 void RedactorMainWindow::on_actionNew_triggered()
 {
-    ui->tabWidget->addTab(new TextForm(), "main.pyf");
+    ui->tabWidget->addTab(new TextForm(), "main.pfg");
 }
 
 void RedactorMainWindow::on_tabWidget_tabCloseRequested(int index)
@@ -139,7 +141,7 @@ void RedactorMainWindow::on_actionSave_as_triggered()
 
 void RedactorMainWindow::on_actionNew_Window_triggered()
 {
-    RedactorMainWindow *other = new RedactorMainWindow;
+    RedactorMainWindow *other = new RedactorMainWindow(par);
     other->move(x() + 40, y() + 40);
     other->show();
 }
@@ -395,3 +397,129 @@ bool RedactorMainWindow::maybeSave() {
 //    //QMessageBox::warning(this,"Completed!","Completed!");
 //    return;
 //}
+
+void RedactorMainWindow::on_actionClose_triggered()
+{
+    QMessageBox::StandardButton r;
+    r = QMessageBox::warning(this, tr("Pifagor IDE"),
+                             "Are you sure you want to exit the app? \n Unsaved data will be lost!",
+                             QMessageBox::Close | QMessageBox::Cancel);
+    if (r == QMessageBox::Close) {
+        std::vector<RedactorMainWindow*> all_w = ((MainWindow*)par)->all_windows;
+        close();
+        for (auto i : all_w) {
+            if (i != nullptr && i != this) {
+                return;
+            }
+        }
+        par->close();
+    }
+}
+
+
+void RedactorMainWindow::on_actionClose_All_triggered()
+{
+    QMessageBox::StandardButton r;
+    r = QMessageBox::warning(this, tr("Pifagor IDE"),
+                             "Are you sure you want to exit the app? \n Unsaved data will be lost!",
+                             QMessageBox::Close | QMessageBox::Cancel);
+    if (r == QMessageBox::Close) {
+        std::vector<RedactorMainWindow*> all_w = ((MainWindow*)par)->all_windows;
+        for (auto i : all_w) {
+            if (i != nullptr) {
+                i->close();
+            }
+        }
+        par->close();
+    }
+}
+
+
+void RedactorMainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::about(this, tr("About Application"),
+                       tr("The <b>PifagorIDE</b> -- is a software development environment\n"
+                          "in the Pythagoras programming language.\n"
+                          "For more information, visit the language developer's website:\n"
+                          "http://www.softcraft.ru"));
+}
+
+
+void RedactorMainWindow::on_actionGo_up_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionChoose_dir_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionTranslate_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionExecute_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionBreak_execution_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionDebug_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionBreak_Debug_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionNext_step_triggered()
+{
+
+}
+
+
+void RedactorMainWindow::on_actionCascade_triggered()
+{
+    std::vector<RedactorMainWindow*> all_w  = ((MainWindow*)par)->all_windows;
+    int x = 0, y = 0;
+    for (auto i : all_w) {
+        if (i != nullptr) {
+            i->move(x + 10, y + 20);
+        }
+        x += 40;
+        y += 40;
+    }
+}
+
+void RedactorMainWindow::closeEvent(QCloseEvent *event) {
+    QMessageBox::StandardButton r;
+    r = QMessageBox::warning(this, tr("Pifagor IDE"),
+                             "Are you sure you want to exit the app? \n Unsaved data will be lost!",
+                             QMessageBox::Close | QMessageBox::Cancel);
+    if (r == QMessageBox::Close) {
+        std::vector<RedactorMainWindow*> all_w = ((MainWindow*)par)->all_windows;
+        close();
+        for (auto i : all_w) {
+            if (i != nullptr && i != this) {
+                return;
+            }
+        }
+        par->close();
+    }
+}
+

@@ -28,7 +28,6 @@ set(PROJECT_SOURCES
         QSourceHighlite.pri
         Highlighter.h
         Highlighter.cpp
-        libPifagorTrans.a
         mythread.h
         mythread.cpp
 
@@ -112,7 +111,7 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(Pifagor_IDE PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${CMAKE_CURRENT_LIST_DIR}/libPifagorTrans.a)
+target_link_libraries(Pifagor_IDE PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # target_link_libraries(Pifagor_IDE PRIVATE build-trans-Desktop-Debug/libPifagorTrans.a)
 
