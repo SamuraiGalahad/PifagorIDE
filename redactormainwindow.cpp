@@ -43,6 +43,8 @@ RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     rez = true;
     Err=new char[1000];
     output=new char[1000000];
+
+    connect(runThread, SIGNAL(finished()), this, SLOT(ThreadFinshed()));
 }
 
 RedactorMainWindow::~RedactorMainWindow()
@@ -370,11 +372,11 @@ void RedactorMainWindow::DebugOrExecute()
     // Очистка таба результатов. Его подготовка к получению результата
     //rezEdit->clear();
     ui->tabWidget_2->setCurrentIndex(3);
-    ((QTextEdit*)ui->tabWidget->currentWidget())->clear();
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText("");
 
     // ВЫтаскивается из редактора аргумент
     ui->tabWidget_2->setCurrentIndex(2);
-    argName = ((QTextEdit*)ui->tabWidget->currentWidget())->toPlainText();
+    argName = ((QTextEdit*)ui->tabWidget_2->currentWidget())->toPlainText();
 
     if(argName.size()>0)
     {
@@ -412,11 +414,11 @@ void RedactorMainWindow::Execute()
     //workTab->setCurrentIndex(3);    // Установка активным таба результатов    // Установка активным таба результатов
 }
 
-//void RedactorMainWindow::BreakExecute()
-//{
-//    isBroken=true;
-//    breakWork();
-//}
+void RedactorMainWindow::BreakExecute()
+{
+    isBroken=true;
+    breakWork();
+}
 
 //void RedactorMainWindow::Debug()
 //{
@@ -507,61 +509,52 @@ void RedactorMainWindow::Execute()
 //    return;
 //}
 
-//void RedactorMainWindow::run(void *inFishka, QString name, bool trace)
-//{
-
-//    //output=interpretate(inFishka, mModule, MakeCharMas(name), Err, rez, trace);
-
-//    /// Новый вариант run, использующий только запуск интерпретатора
-//    /// без обращения к главному окну и его компонентам
-//    runThread->Set(interpretate, inFishka, mModule, MakeCharMas(name), Err, rez, trace);
-//    runThread->start();
-//}
-
 //// Слот, обеспечивающий реакцию на завершение потока
-//void RedactorMainWindow::ThreadFinshed() {
-//    output = runThread->GetOutput();
-//    rez = runThread->GetRez();
-//    trace = runThread->GetTrace();
+void RedactorMainWindow::ThreadFinshed() {
+    output = runThread->GetOutput();
+    rez = runThread->GetRez();
+    trace = runThread->GetTrace();
 
-//    if(rez)
-//    {
-//        if(trace)
-//        {
-//            //debugTextFromThread=tr(output);
-//            //SetRez(2);
-//            debugEdit->setText(tr(getCurResult()));
-//            workTab->setCurrentWidget(debugEdit);
-//            // Фокус смещается на последнюю позицию
-//            QTextCursor c = debugEdit->textCursor();
-//            c.movePosition(QTextCursor::End);
-//            debugEdit->setTextCursor(c);
-//            // Чтобы не начать по новой, используется отвлечение внимания диалоговым окном.
-//            QMessageBox::information(this,"Debugging","Debugging has been Completed!");
-//        }
-//        else
-//        {
-//            //execTextFromThread=tr(output);
-//            //SetRez(3);
-//            rezEdit->setText(tr(getCurResult()));
-//            workTab->setCurrentWidget(rezEdit);
+    if(rez)
+    {
+        if(trace)
+        {
+            //debugTextFromThread=tr(output);
+            //SetRez(2);
+            ui->tabWidget_2->setCurrentIndex(1);
 
-//        }
-//    }
-//    else
-//    {
-//        if(!(isBroken)) {
-//            QMessageBox::warning(this,"Execution error!", tr(Err));
-//        }
-//        else
-//        {
-//            QMessageBox::warning(this,"Execution interrupted!", "Programm execution interrupted by user's request");
-//        }
-//    }
-//    SetFlagsFalse();
-//    //QMessageBox::warning(this,"Completed!","Completed!");
-//    return;
-//}
+            ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(tr(getCurResult()));
+            // Фокус смещается на последнюю позицию
+            QTextCursor c = ((QTextEdit*)ui->tabWidget_2->currentWidget())->textCursor();
+            c.movePosition(QTextCursor::End);
+            ((QTextEdit*)ui->tabWidget_2->currentWidget())->setTextCursor(c);
+            // Чтобы не начать по новой, используется отвлечение внимания диалоговым окном.
+            QMessageBox::information(this,"Debugging","Debugging has been Completed!");
+        }
+        else
+        {
+            //execTextFromThread=tr(output);
+            //SetRez(3);
+            ui->tabWidget_2->setCurrentIndex(2);
+            ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(tr(getCurResult()));
+            //workTab->setCurrentWidget(rezEdit);
+
+        }
+    }
+    else
+    {
+        if(!(isBroken)) {
+            QMessageBox::warning(this,"Execution error!", tr(Err));
+        }
+        else
+        {
+            QMessageBox::warning(this,"Execution interrupted!", "Programm execution interrupted by user's request");
+        }
+    }
+    debug = false;
+    //QMessageBox::warning(this,"Completed!","Completed!");
+    return;
+}
 
 void RedactorMainWindow::on_actionClose_triggered()
 {
@@ -647,7 +640,7 @@ void RedactorMainWindow::on_actionExecute_triggered()
 
 void RedactorMainWindow::on_actionBreak_execution_triggered()
 {
-
+    BreakExecute();
 }
 
 
