@@ -3,25 +3,26 @@
 
 #include <map>
 #include <vector>
+#include <string>
 
 class CFunction;
 class CGeneralObject;
 class CFishka;
 
-typedef map<string, CGeneralObject*, less<string> > TNameTable;
-typedef pair<string,CGeneralObject*> TNamedObject;
+typedef std::map<std::string, CGeneralObject*, std::less<std::string> > TNameTable;
+typedef std::pair<std::string,CGeneralObject*> TNamedObject;
 
-typedef multimap<float, CFunction*, less<float> > TOverFuncTableElement;
-typedef map<string, TOverFuncTableElement, less<string> > TOverFuncTable;
+typedef std::multimap<float, CFunction*, std::less<float> > TOverFuncTableElement;
+typedef std::map<std::string, TOverFuncTableElement, std::less<std::string> > TOverFuncTable;
 
 struct TLocalValTableElement
 {
-	map<string,CFishka*> LocalValMap;
+    std::map<std::string,CFishka*> LocalValMap;
 //	CFishka* RezFishka;
 };
 
 typedef TLocalValTableElement* PLocalValTableElement;
 
-typedef vector<TLocalValTableElement> TLocalValTable;
+typedef std::vector<TLocalValTableElement> TLocalValTable;
 
 #endif

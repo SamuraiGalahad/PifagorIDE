@@ -44,7 +44,7 @@ bool CArgTranslator::Translate(char *FName, CTerm* &iTerm)
 	return true;
 }
 
-bool CArgTranslator::IDFind(string ID,CGeneralObject* Owner,CGeneralObject* &Object)
+bool CArgTranslator::IDFind(std::string ID,CGeneralObject* Owner,CGeneralObject* &Object)
 {
 	CGeneralObject* Tmp;
 	CModule* OModule;

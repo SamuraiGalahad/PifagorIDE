@@ -10,13 +10,13 @@
 #include "ArgTranslator.h"
 #include "ArgScaner.h"
 
-extern "C" void* oiTranslate(char* FName, char* Err,int& rez);
-extern "C" void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
-extern "C" void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez);
-extern "C" char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace);
-extern "C" void  oiMakeStep();
-extern "C" char* oiGetCurResult();
-extern "C" void  oiBreakWork();
-extern "C" void  oiSetDataBuffer(const char* cStrValue);
+extern void* oiTranslate(char* FName, char* Err,int& rez);
+extern void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
+extern void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez);
+extern char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace);
+extern void  oiMakeStep();
+extern char* oiGetCurResult();
+extern void  oiBreakWork();
+extern void  oiSetDataBuffer(const char* cStrValue);
 
 #endif

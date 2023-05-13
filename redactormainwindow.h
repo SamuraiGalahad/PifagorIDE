@@ -39,7 +39,7 @@ public:
     char* MakeCharMas(QString text);
     void SetRez(int num);
     void SetFlagsFalse();
-    void setTranslated(bool data);
+    void setTranslated(bool d);
     void openFile(QString filename);
     bool isBroken;
     QWidget* par;
@@ -108,7 +108,7 @@ private:
     void createNewTabAndSetToNew();
     QString getTextFromCurrentTab();
     bool maybeSave();
-    //void linkLib();
+    void linkLib();
     MyThread *runThread;
 
     bool rez;
@@ -135,6 +135,8 @@ private:
     void DebugOrExecute();
     void run(void *inFishka, QString name, bool trace);
     void ThreadFinshed();
+
+    void fillList();
 };
 
 #endif // REDACTORMAINWINDOW_H

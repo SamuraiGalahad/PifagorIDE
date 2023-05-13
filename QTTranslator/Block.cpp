@@ -31,7 +31,7 @@ void CBlock::AddElem(CExpression* Expr)
 	NoNamedElemList.push_back(Expr);
 };
 
-void* CBlock::GetObject(string Name)
+void* CBlock::GetObject(std::string Name)
 {
 	if(NameTable.find(Name)!=NameTable.end())
 		return NameTable[Name];
@@ -39,9 +39,9 @@ void* CBlock::GetObject(string Name)
 	return NULL;
 }
 
-bool CBlock::GetVal(string Str,CFishka* &Rezult)
+bool CBlock::GetVal(std::string Str,CFishka* &Rezult)
 {
-	vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 	iter--;
 	if((*iter).LocalValMap.find(Str)!=(*iter).LocalValMap.end())
 	{
@@ -52,11 +52,11 @@ bool CBlock::GetVal(string Str,CFishka* &Rezult)
 	else return ((CBlock*)Owner)->GetVal(Str,Rezult);
 	return false;
 }
-void CBlock::AddVal(string Str,CFishka* Val)
+void CBlock::AddVal(std::string Str,CFishka* Val)
 {
 	if(NameTable.find(Str)!=NameTable.end())
-	{
-		vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    {
+        std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 		iter--;
 		(*iter).LocalValMap[Str]=Val;
 	}
@@ -75,9 +75,9 @@ bool CBlock::GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator*
 	PLocalValTableElement Tmp=new TLocalValTableElement;
 //	Tmp->RezFishka=NULL;
 	LocalValTable.push_back(*Tmp);
-	bool Rez=true;
-	vector<CExpression*>::iterator i;
-	map<string, CGeneralObject*, less<string> >::iterator j;
+    bool Rez=true;
+    std::vector<CExpression*>::iterator i;
+    std::map<std::string, CGeneralObject*, std::less<std::string> >::iterator j;
 
 	for(j=NameTable.begin();j!=NameTable.end();j++)
 	{
@@ -89,7 +89,7 @@ bool CBlock::GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator*
 		Rez&=(*i)->GetFishka(Arg,Rezult,Trace,Interpretator);
 	}
 
-	vector<TLocalValTableElement>::iterator Iterator;
+    std::vector<TLocalValTableElement>::iterator Iterator;
 	Iterator=LocalValTable.end();
 	Iterator--;
 

@@ -17,8 +17,8 @@ public:
 	CArgTranslator(CScaner* Scaner,CModule* Module);
 	virtual ~CArgTranslator();
 	
-	virtual bool Translate(char *FName, CTerm* &iTerm);
-	virtual bool IDFind(string ID,CGeneralObject* Owner,CGeneralObject* &Object);
+    virtual bool Translate(char *FName, CTerm* &iTerm);
+    virtual bool IDFind(std::string ID,CGeneralObject* Owner,CGeneralObject* &Object);
 
 	virtual bool Delay_List(CGeneralObject* NameOwner,CTerm* &Trm) { return false; };
 protected:

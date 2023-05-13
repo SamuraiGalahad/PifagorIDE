@@ -24,7 +24,7 @@ public:
 	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
 	CGeneralObject* Object;
 private:
-	string Str;
+    std::string Str;
 };
 
 #endif

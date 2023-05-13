@@ -17,7 +17,7 @@ public:
 	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
 	virtual bool IsList() {return true;};
 private:
-	vector<CExpression*> ElemList;
+    std::vector<CExpression*> ElemList;
 	ELexTypeEnum Type;
 };
 

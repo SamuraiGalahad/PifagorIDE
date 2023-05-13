@@ -259,8 +259,8 @@ bool CScaner::GetLexem(TLexem &Lexem)
 
 void CScaner::GetNextLexem(TLexem &Lexem)
 {
-	ifstream i;
-	ofstream o;
+    std::ifstream i;
+    std::ofstream o;
 	int k=0;
 	if(m_iLexCount>0)
 	{

@@ -9,12 +9,12 @@ class CFunction;
 class CExeption  
 {
 public:
-	CExeption(CFunction* Context,string Message,int ErrCode=0); 
+    CExeption(CFunction* Context,std::string Message,int ErrCode=0);
 	virtual ~CExeption();
 	
 	virtual const char* GetErrMess();
 
-	string m_sMessage;
+    std::string m_sMessage;
 	CFunction* m_pContext;
 	int m_iErrCode;
 };

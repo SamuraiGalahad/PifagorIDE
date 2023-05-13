@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+//#include "Precompiled.h"
 
 #include "Fishka.h"
 #include "List.h"
@@ -7,7 +7,7 @@
 #include "ListFishka.h"
 #include "WrapFishka.h"
 
-extern TKWTabElement KWTab[];
+extern TKWTabElement KWTab[10000];
 
 const char* RuntimeErrTable[ERRCOUNT]=
 	{"No Errors!",

@@ -13,7 +13,7 @@
 #include "KeyWord.h"
 
 
-vector <string> GlobalNameList;
+std::vector <std::string> GlobalNameList;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -23,24 +23,25 @@ CTranslator::CTranslator(CScaner *Scaner)
 	m_bBlockContext=false;
 };
 
+void CTranslator::EraseGlobalObjectTable()
+{
+    if(GlobalObjectTable.empty()) return;
+    std::vector<CGeneralObject*>::iterator i;
+
+    i=GlobalObjectTable.end();
+    i--;
+    for(;i!=GlobalObjectTable.begin();i--)
+        delete (*i);
+    delete (*i);
+
+    GlobalObjectTable.clear();
+};
+
 CTranslator::~CTranslator() 
 { 
 	EraseGlobalObjectTable();
 };
 
-extern "C" void CTranslator::EraseGlobalObjectTable()
-{
-	if(GlobalObjectTable.empty()) return;
-	vector<CGeneralObject*>::iterator i;
-
-	i=GlobalObjectTable.end();
-	i--;
-	for(;i!=GlobalObjectTable.begin();i--)
-		delete (*i);
-	delete (*i);
-
-	GlobalObjectTable.clear();
-}; 
 
 bool CTranslator::Const_Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 {
@@ -49,8 +50,8 @@ bool CTranslator::Const_Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 	{
 		do
 		{
-			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			((CModule*)NameOwner)->InsertConstant(make_pair(string(m_tlLexem.Str),Expr));
+            if(m_tlLexem.Lex!=RDEF_NAME) return true;
+            ((CModule*)NameOwner)->InsertConstant(make_pair(std::string(m_tlLexem.Str),Expr));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -67,8 +68,8 @@ bool CTranslator::Const_Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 		Owner->AddElem((CExpression*)Tmp);
 		do
 		{
-			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			((CModule*)NameOwner)->InsertConstant(make_pair(string(m_tlLexem.Str),Expr));
+            if(m_tlLexem.Lex!=RDEF_NAME) return true;
+            ((CModule*)NameOwner)->InsertConstant(make_pair(std::string(m_tlLexem.Str),Expr));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -77,8 +78,8 @@ bool CTranslator::Const_Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 
 bool CTranslator::Const_Left_Named_El(CGeneralObject* NameOwner,CGeneralObject* Owner,CExpression* &Expr)
 {
-	if(m_tlLexem.Lex!=LDEF_NAME) return false;
-	string LeftName=string(m_tlLexem.Str);
+    if(m_tlLexem.Lex!=LDEF_NAME) return false;
+    std::string LeftName=std::string(m_tlLexem.Str);
 	TLexem OldLexem=m_tlLexem;
 	m_pScaner->GetNextLexem(m_tlLexem);
 	if(Const_Expr(NameOwner,Expr))
@@ -198,8 +199,8 @@ bool CTranslator::Const_Atom(CGeneralObject* NameOwner,CTerm* &Trm)
 			goto _1;
 		};
 	case BOOL_CONST : 		
-		{
-			string Str=m_tlLexem.Str;
+        {
+            std::string Str=m_tlLexem.Str;
 
 			if(Str=="true") Trm = new CAtom<bool>(true);
 			else Trm = new CAtom<bool>(false);
@@ -363,16 +364,16 @@ bool CTranslator::Named_Def(CModule* Owner)
 		{
 			throw CExeption(NULL,"",11);
 			return false;
-		};
-		if(TmpFunc) TmpFunc->SelfName=string(m_tlLexem.Str);
-		CheckID(TmpFunc->SelfName,Owner,true);
-		Owner->InsertNObject(make_pair(string(m_tlLexem.Str),TmpFunc));
+        };
+        if(TmpFunc) TmpFunc->SelfName=std::string(m_tlLexem.Str);
+        CheckID(TmpFunc->SelfName,Owner,true);
+        Owner->InsertNObject(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 		m_pScaner->GetNextLexem(m_tlLexem);
 		do
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			CheckID(m_tlLexem.Str,Owner,true);
-			Owner->InsertNObject(make_pair(string(m_tlLexem.Str),TmpFunc));
+            CheckID(m_tlLexem.Str,Owner,true);
+            Owner->InsertNObject(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -383,16 +384,16 @@ bool CTranslator::Named_Def(CModule* Owner)
 		{
 			throw CExeption(NULL,"",11);
 			return false;
-		};
-		if(TmpFunc) TmpFunc->SelfName=string(m_tlLexem.Str);
-		CheckID(m_tlLexem.Str,Owner,true);
-		Owner->InsertNObject(make_pair(string(m_tlLexem.Str),TmpFunc));
+        };
+        if(TmpFunc) TmpFunc->SelfName=std::string(m_tlLexem.Str);
+        CheckID(m_tlLexem.Str,Owner,true);
+        Owner->InsertNObject(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 		m_pScaner->GetNextLexem(m_tlLexem);
 		do
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			CheckID(m_tlLexem.Str,Owner,true);
-			Owner->InsertNObject(make_pair(string(m_tlLexem.Str),TmpFunc));
+            CheckID(m_tlLexem.Str,Owner,true);
+            Owner->InsertNObject(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -403,16 +404,16 @@ bool CTranslator::Named_Def(CModule* Owner)
 		{
 			throw CExeption(NULL,"",11);
 			return false;
-		};
-		if(TmpFunc) TmpFunc->SelfName=string(m_tlLexem.Str);
-		CheckID(m_tlLexem.Str,Owner,true);
-		Owner->InsertUserType(make_pair(string(m_tlLexem.Str),TmpFunc));
+        };
+        if(TmpFunc) TmpFunc->SelfName=std::string(m_tlLexem.Str);
+        CheckID(m_tlLexem.Str,Owner,true);
+        Owner->InsertUserType(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 		m_pScaner->GetNextLexem(m_tlLexem);
 		do
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			CheckID(m_tlLexem.Str,Owner,true);
-			Owner->InsertUserType(make_pair(string(m_tlLexem.Str),TmpFunc));
+            CheckID(m_tlLexem.Str,Owner,true);
+            Owner->InsertUserType(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -423,16 +424,16 @@ bool CTranslator::Named_Def(CModule* Owner)
 		{
 			throw CExeption(NULL,"",11);
 			return false;
-		}
-		TmpExpr->SelfName=string(m_tlLexem.Str);
-		CheckID(m_tlLexem.Str,Owner,true);
-		Owner->InsertConstant(make_pair(string(m_tlLexem.Str),TmpExpr));
+        }
+        TmpExpr->SelfName=std::string(m_tlLexem.Str);
+        CheckID(m_tlLexem.Str,Owner,true);
+        Owner->InsertConstant(make_pair(std::string(m_tlLexem.Str),TmpExpr));
 		m_pScaner->GetNextLexem(m_tlLexem);
 		do
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
-			CheckID(m_tlLexem.Str,Owner,true);
-			Owner->InsertConstant(make_pair(string(m_tlLexem.Str),TmpExpr));
+            CheckID(m_tlLexem.Str,Owner,true);
+            Owner->InsertConstant(make_pair(std::string(m_tlLexem.Str),TmpExpr));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -444,18 +445,18 @@ bool CTranslator::Named_Def(CModule* Owner)
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
 			if(TmpExpr)
 			{
-				CheckID(m_tlLexem.Str,Owner,true);
-				Owner->InsertConstant(make_pair(string(m_tlLexem.Str),TmpExpr));
+                CheckID(m_tlLexem.Str,Owner,true);
+                Owner->InsertConstant(make_pair(std::string(m_tlLexem.Str),TmpExpr));
 			}
 			if(TmpFunc)
 			{
-				CheckID(m_tlLexem.Str,Owner,true);
-				Owner->InsertNObject(make_pair(string(m_tlLexem.Str),TmpFunc));
+                CheckID(m_tlLexem.Str,Owner,true);
+                Owner->InsertNObject(make_pair(std::string(m_tlLexem.Str),TmpFunc));
 			}
 			if(TmpTypeDef)
 			{
-				CheckID(m_tlLexem.Str,Owner,true);
-				Owner->InsertUserType(make_pair(string(m_tlLexem.Str),TmpTypeDef));
+                CheckID(m_tlLexem.Str,Owner,true);
+                Owner->InsertUserType(make_pair(std::string(m_tlLexem.Str),TmpTypeDef));
 			}
 
 			m_pScaner->GetNextLexem(m_tlLexem);
@@ -464,7 +465,7 @@ bool CTranslator::Named_Def(CModule* Owner)
 	return false;
 }
 
-bool CTranslator::Definition(CModule* Owner,CFunction* &Func, string Name)
+bool CTranslator::Definition(CModule* Owner,CFunction* &Func, std::string Name)
 {
 	if(m_tlLexem.Lex==KWPREFUNC) 
 	{
@@ -476,13 +477,13 @@ bool CTranslator::Definition(CModule* Owner,CFunction* &Func, string Name)
 	return Function(Owner,Func,Name);
 }
 
-bool CTranslator::DefinitionOverFunc(CModule* Owner,CFunction* &Func, string Name)
+bool CTranslator::DefinitionOverFunc(CModule* Owner,CFunction* &Func, std::string Name)
 {
 	return Function(Owner,Func,Name);
 }
 
 
-bool CTranslator::UserTypeDefinition(CModule* Owner,CFunction* &TypeDef, string Name)
+bool CTranslator::UserTypeDefinition(CModule* Owner,CFunction* &TypeDef, std::string Name)
 {
 	return UserType(Owner,TypeDef,Name);
 }
@@ -504,11 +505,11 @@ bool CTranslator::Const_Definition(CModule* Owner,CExpression* &Expr)
 
 bool CTranslator::Left_Named_Def(CModule* Owner,CExpression* &Expr,CFunction* &Func,CFunction* &TypeDef,float &Rang)
 {
-	string LeftName;
+    std::string LeftName;
 	Rang=0;
 	bool Overloaded=false;
 
-	LeftName=string(m_tlLexem.Str);
+    LeftName=std::string(m_tlLexem.Str);
 
 	if(m_tlLexem.Lex==ID)
 	{
@@ -533,8 +534,8 @@ bool CTranslator::Left_Named_Def(CModule* Owner,CExpression* &Expr,CFunction* &F
 		if(m_tlLexem.Lex!=LDEF_NAME) return false;
 
 		//CGeneralObject* Object=NULL;
-		//Owner->InsertNObject(make_pair(string(m_tlLexem.Str),Object));
-		GlobalNameList.push_back(string(m_tlLexem.Str));
+        //Owner->InsertNObject(make_pair(string(m_tlLexem.Str),Object));
+        GlobalNameList.push_back(std::string(m_tlLexem.Str));
 	}
 
 	CheckID(LeftName,Owner,!Overloaded);
@@ -581,9 +582,9 @@ bool CTranslator::Left_Named_Def(CModule* Owner,CExpression* &Expr,CFunction* &F
 	return false;
 }
 
-bool CTranslator::Function(CModule* Owner,CFunction* &Func,string Name)
+bool CTranslator::Function(CModule* Owner,CFunction* &Func,std::string Name)
 {
-	string ParamID;
+    std::string ParamID;
 	if(m_tlLexem.Lex!=KWFUNCDEF) return false;
 	int Line,Pos;
 	m_pScaner->GetCurrPos(Line,Pos);
@@ -591,8 +592,8 @@ bool CTranslator::Function(CModule* Owner,CFunction* &Func,string Name)
 	//if(m_tlLexem.Lex!=ID) return false;
 
 	if(m_tlLexem.Lex==ID)
-	{
-		ParamID=string(m_tlLexem.Str);
+    {
+        ParamID=std::string(m_tlLexem.Str);
 		m_pScaner->GetNextLexem(m_tlLexem);
 	}
 	else ParamID="";
@@ -642,9 +643,9 @@ _1:
 	return true;
 }
 
-bool CTranslator::UserType(CModule* Owner,CFunction* &Func,string Name)
+bool CTranslator::UserType(CModule* Owner,CFunction* &Func,std::string Name)
 {
-	string ParamID;
+    std::string ParamID;
 	if(m_tlLexem.Lex!=KWTYPEDEF) return false;
 	int Line,Pos;
 	m_pScaner->GetCurrPos(Line,Pos);
@@ -652,8 +653,8 @@ bool CTranslator::UserType(CModule* Owner,CFunction* &Func,string Name)
 	//if(m_tlLexem.Lex!=ID) return false;
 
 	if(m_tlLexem.Lex==ID)
-	{
-		ParamID=string(m_tlLexem.Str);
+    {
+        ParamID=std::string(m_tlLexem.Str);
 		m_pScaner->GetNextLexem(m_tlLexem);
 	}
 	else ParamID="";
@@ -712,13 +713,13 @@ bool CTranslator::Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
 			if(((CBlock*)NameOwner)->NameTable.find(m_tlLexem.Str)!=((CBlock*)NameOwner)->NameTable.end())
-			{
-				throw CExeption(NULL,string(m_tlLexem.Str),8);
+            {
+                throw CExeption(NULL,std::string(m_tlLexem.Str),8);
 //				InOutBuffer<<"\n"<<"Identifier \""<< m_tlLexem.Str <<"\" is already defined!!!"<<"\n";
 				return false;
-			}
-			Expr->SelfName=string(m_tlLexem.Str);
-			NameOwner->InsertNObject(make_pair(string(m_tlLexem.Str),Expr));
+            }
+            Expr->SelfName=std::string(m_tlLexem.Str);
+            NameOwner->InsertNObject(make_pair(std::string(m_tlLexem.Str),Expr));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -730,8 +731,8 @@ bool CTranslator::Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 			return true;
 		}
 		if(((CBlock*)NameOwner)->NameTable.find(m_tlLexem.Str)!=((CBlock*)NameOwner)->NameTable.end())
-		{
-			throw CExeption(NULL,string(m_tlLexem.Str),8);
+        {
+            throw CExeption(NULL,std::string(m_tlLexem.Str),8);
 //			InOutBuffer<<"\n"<<"Identifier \""<< m_tlLexem.Str <<"\" is already defined!!!"<<"\n";
 			return false;
 		}
@@ -746,12 +747,12 @@ bool CTranslator::Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 		{
 			if(m_tlLexem.Lex!=RDEF_NAME) return true;
 			if(((CBlock*)NameOwner)->NameTable.find(m_tlLexem.Str)!=((CBlock*)NameOwner)->NameTable.end())
-			{
-				throw CExeption(NULL,string(m_tlLexem.Str),8);
+            {
+                throw CExeption(NULL,std::string(m_tlLexem.Str),8);
 //				InOutBuffer<<"\n"<<"Identifier \""<< m_tlLexem.Str <<"\" is already defined!!!"<<"\n";
 				return false;
-			}
-			NameOwner->InsertNObject(make_pair(string(m_tlLexem.Str),Expr));
+            }
+            NameOwner->InsertNObject(make_pair(std::string(m_tlLexem.Str),Expr));
 			m_pScaner->GetNextLexem(m_tlLexem);
 		}while(1);
 	}
@@ -760,12 +761,12 @@ bool CTranslator::Element(CGeneralObject* NameOwner,CGeneralObject* Owner)
 
 bool CTranslator::Left_Named_El(CGeneralObject* NameOwner,CGeneralObject* Owner,CExpression* &Expr)
 {
-	if(m_tlLexem.Lex!=LDEF_NAME) return false;
-	string LeftName=string(m_tlLexem.Str);	
+    if(m_tlLexem.Lex!=LDEF_NAME) return false;
+    std::string LeftName=std::string(m_tlLexem.Str);
 	if(((CBlock*)NameOwner)->NameTable.find(m_tlLexem.Str)!=((CBlock*)NameOwner)->NameTable.end())
 	{
 //		InOutBuffer<<"\n"<<"Identifier \""<< m_tlLexem.Str <<"\" is already defined!!!"<<"\n";
-		throw CExeption(NULL,string(m_tlLexem.Str),8);
+        throw CExeption(NULL,std::string(m_tlLexem.Str),8);
 		return false;
 	}
 	TLexem OldLexem=m_tlLexem;
@@ -864,8 +865,8 @@ bool CTranslator::Term(CGeneralObject* NameOwner,CTerm* &Trm)
 	{
 		CGeneralObject* Tmp;
 		if(!IDFind(m_tlLexem.Str,NameOwner,Tmp))
-		{
-			throw CExeption(NULL,string(m_tlLexem.Str),15);// InOutBuffer<<"\n"<<"Unknown identifier \""<< m_tlLexem.Str <<"\""<<"\n";
+        {
+            throw CExeption(NULL,std::string(m_tlLexem.Str),15);// InOutBuffer<<"\n"<<"Unknown identifier \""<< m_tlLexem.Str <<"\""<<"\n";
 			return false;
 		}
 		Trm = (CTerm*) new CIdentifier(NameOwner,m_tlLexem);
@@ -904,8 +905,8 @@ bool CTranslator::Atom(CGeneralObject* NameOwner,CTerm* &Trm)
 			goto _1;
 		};
 	case BOOL_CONST : 
-		{
-			string Str=m_tlLexem.Str;
+        {
+            std::string Str=m_tlLexem.Str;
 			if(Str=="true") Trm = new CAtom<bool>(true);
 			else Trm = new CAtom<bool>(false);
 			GlobalObjectTable.push_back(Trm);
@@ -1094,7 +1095,7 @@ _1:	Trm = new CKeyWord(m_tlLexem);
 	return true;
 }
 
-bool CTranslator::IDFind(string ID,CGeneralObject* Owner,CGeneralObject* &Object)
+bool CTranslator::IDFind(std::string ID,CGeneralObject* Owner,CGeneralObject* &Object)
 {
 	CGeneralObject* Tmp;
 	CModule* OModule;
@@ -1152,7 +1153,7 @@ bool CTranslator::IDFind(string ID,CGeneralObject* Owner,CGeneralObject* &Object
 }
 
 
-extern "C" bool CTranslator::Translate(char *FName,CModule* &ppModule)
+bool CTranslator::Translate(char *FName,CModule* &ppModule)
 {
 	m_bBlockContext=false;
 	m_pScaner->OpenAllFiles(FName);
@@ -1178,32 +1179,32 @@ void CTranslator::GetCurrPos(int &LNum, int &CNum)
 	m_pScaner->GetCurrPos(LNum,CNum);
 }
 
-bool CTranslator::CheckID(string ID,CModule* Owner,bool CheckOverFunc)
+bool CTranslator::CheckID(std::string ID,CModule* Owner,bool CheckOverFunc)
 {
 	if(Owner->NameTable.find(ID)!=Owner->NameTable.end())
 	{
 		if(Owner->NameTable[ID]!=NULL)
-		{
-			throw CExeption(NULL,string(ID),7);
+        {
+            throw CExeption(NULL,std::string(ID),7);
 			return false;
 		};
 	}
 	if(Owner->ConstTable.find(ID)!=Owner->ConstTable.end())
-	{
-		throw CExeption(NULL,string(ID),5);
+    {
+        throw CExeption(NULL,std::string(ID),5);
 		return false;
 	}
 
 	if(Owner->TypeDefTable.find(ID)!=Owner->TypeDefTable.end())
-	{
-		throw CExeption(NULL,string(ID),20);
+    {
+        throw CExeption(NULL,std::string(ID),20);
 		return false;
 	}
 	if(CheckOverFunc)
 	{
 		if(Owner->OverFuncTable.find(ID)!=Owner->OverFuncTable.end())
-		{
-			throw CExeption(NULL,string(ID),21);
+        {
+            throw CExeption(NULL,std::string(ID),21);
 			return false;
 		}
 	}

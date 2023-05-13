@@ -29,7 +29,7 @@ void CExpression::AddTerm(CTerm* Term)
 }
 void CExpression::AddTermBeforeEnd(CTerm* Term)
 {
-	vector<CTerm*>::iterator i=TermList.end();
+    std::vector<CTerm*>::iterator i=TermList.end();
 	TermList.insert(--i,Term);
 }
 

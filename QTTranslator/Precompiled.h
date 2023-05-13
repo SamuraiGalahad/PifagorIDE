@@ -12,7 +12,6 @@
 extern char data[10000000];
 extern volatile bool WaitForSignal;
 extern volatile bool StopThread;
-using namespace std;
-extern void DW(char *s);
+void DW(char *s);
 #endif
 

@@ -15,8 +15,8 @@ public:
 	virtual  ~CGeneralObject() { };
 
 	virtual void AddElem(CExpression* Expression) { };
-	virtual void InsertNObject(TNamedObject Object) { };
-	virtual void* GetObject(string Name) { return (CGeneralObject*)NULL;};
+    virtual void InsertNObject(TNamedObject Object) { };
+    virtual void* GetObject(std::string Name) { return (CGeneralObject*)NULL;};
 
 	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator) {return false;};
 
@@ -24,8 +24,8 @@ public:
 	virtual bool IsList() {return false;};
 	virtual bool IsFunc() {return false;};
 
-	CGeneralObject* Owner;
-	string SelfName;
+    CGeneralObject* Owner;
+    std::string SelfName;
 };
 
 #endif

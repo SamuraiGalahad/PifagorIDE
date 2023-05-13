@@ -47,7 +47,7 @@ void CModule::InsertNObject(TNamedObject Object)
 
 void CModule::InsertOverFunc(TNamedObject Object,float Rang)
 {
-	OverFuncTable[Object.first].insert(make_pair(Rang,(CFunction*)(Object.second)));
+    OverFuncTable[Object.first].insert(std::make_pair(Rang,(CFunction*)(Object.second)));
 };
 
 void CModule::InsertConstant(TNamedObject Object)
@@ -59,7 +59,7 @@ void CModule::InsertUserType(TNamedObject Object)
 	TypeDefTable.insert(Object);
 }
 
-void* CModule::GetObject(string Name)
+void* CModule::GetObject(std::string Name)
 {
 	CGeneralObject* Obj;
 	if(Obj=ConstTable[Name]) return Obj;
@@ -73,7 +73,7 @@ void CModule::OutNameTable()
 		//cout << (*i).first << endl;
 };
 
-bool CModule::Call(string Name,CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator)
+bool CModule::Call(std::string Name,CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator)
 {
 	PLocalValTableElement Tmp=new TLocalValTableElement;
 	Rezult=NULL;
@@ -85,9 +85,9 @@ bool CModule::Call(string Name,CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterp
 }
 
 
-bool CModule::GetVal(string Str,CFishka* &Rezult)
+bool CModule::GetVal(std::string Str,CFishka* &Rezult)
 {
-	vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 	iter--;
 	//int S1=LocalValTable.size();
 	//int S2=(*iter).LocalValMap.size();
@@ -98,11 +98,11 @@ bool CModule::GetVal(string Str,CFishka* &Rezult)
 	}
 	return false;
 }
-void CModule::AddVal(string Str,CFishka* Val)
+void CModule::AddVal(std::string Str,CFishka* Val)
 {
 	if(ConstTable.find(Str)!=ConstTable.end())
-	{
-		vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    {
+        std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 		iter--;
 		(*iter).LocalValMap[Str]=Val;
 	}

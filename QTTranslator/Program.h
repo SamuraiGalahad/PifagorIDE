@@ -12,16 +12,16 @@ public:
 	virtual ~CModule();
 
 	virtual void InsertNObject(TNamedObject Object);
-	virtual void InsertOverFunc(TNamedObject Object,float Rang);
-	virtual void* GetObject(string Name);
-	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
-	virtual bool GetVal(string Str,CFishka* &Rezult);
-	virtual void AddVal(string Str,CFishka* Val);
-	bool Call(string Name,CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
+    virtual void InsertOverFunc(TNamedObject Object,float Rang);
+    virtual void* GetObject(std::string Name);
+    virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
+    virtual bool GetVal(std::string Str,CFishka* &Rezult);
+    virtual void AddVal(std::string Str,CFishka* Val);
+    bool Call(std::string Name,CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
 	void InsertConstant(TNamedObject Object);
 	void InsertUserType(TNamedObject Object);
-	void OutNameTable();
-	string StartID;
+    void OutNameTable();
+    std::string StartID;
 	TNameTable ConstTable;
 	TNameTable TypeDefTable;
 	TOverFuncTable OverFuncTable;

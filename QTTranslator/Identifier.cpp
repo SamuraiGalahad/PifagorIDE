@@ -11,8 +11,8 @@
 
 CIdentifier::CIdentifier(CGeneralObject* iOwner,TLexem Lexem) : CTerm()
 {
-	Owner=iOwner;
-	Str=string(Lexem.Str);
+    Owner=iOwner;
+    Str=std::string(Lexem.Str);
 	SelfName="id";
 	ElseTerm=NULL;
 };

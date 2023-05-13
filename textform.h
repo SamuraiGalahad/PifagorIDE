@@ -24,6 +24,7 @@ public:
     void PasteMove();
     Ui::TextForm *ui;
     bool wasSavedAs = false;
+    bool isTranslated = false;
     QString currentFile = "";
     ~TextForm();
 private:

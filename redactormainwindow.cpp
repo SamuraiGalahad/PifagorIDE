@@ -6,14 +6,14 @@
 #include "QTTranslator/Interface.h"
 #include "mainwindow.h"
 
-extern "C" void* oiTranslate(char* FName, char* Err,int& rez);
-extern "C" void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
-extern "C" void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez);
-extern "C" char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace);
-extern "C" void  oiMakeStep();
-extern "C" char* oiGetCurResult();
-extern "C" void  oiBreakWork();
-extern "C" void  oiSetDataBuffer(const char* cStrValue);
+extern void* oiTranslate(char* FName, char* Err,int& rez);
+extern void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
+extern void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez);
+extern char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace);
+extern void  oiMakeStep();
+extern char* oiGetCurResult();
+extern void  oiBreakWork();
+extern void  oiSetDataBuffer(const char* cStrValue);
 
 RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     QMainWindow(parent),
@@ -34,7 +34,7 @@ RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     for (int i = 1; i < dirmodel->columnCount(); ++i)
         ui->treeView->hideColumn(i);
 
- //   linkLib();
+    linkLib();
     this->par = ap;
     ((MainWindow*)par)->all_windows.push_back(this);
     initWorkTabWidget();
@@ -50,6 +50,61 @@ RedactorMainWindow::~RedactorMainWindow()
     delete ui;
 }
 
+//void RedactorMainWindow::connectLib()
+//{
+//    TransLib.setFileName("../build-trans-Desktop-Debug/PifagorTrans");
+//    TransLib.load();
+//    translate = (TransFunction)TransLib.resolve("oiTranslate");
+//    if(!translate)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load Translate function!"));
+//    }
+//    retFuncList = (RetFuncListFunction)TransLib.resolve("oiRetFuncList");
+//    if(!retFuncList)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load RetFunctionList function!"));
+//    }
+//    argTranslate = (ArgTransFunction)TransLib.resolve("oiArgTranslate");
+//    if(!argTranslate)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load ArgumentTranslate function!"));
+//    }
+//    interpretate = (InterpFunction)TransLib.resolve("oiInterp");
+//    if(!interpretate)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load Interpretate function!"));
+//    }
+//    makeStep = (StepFunction)TransLib.resolve("oiMakeStep");
+//    if(!makeStep)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load MakeStep function!"));
+//    }
+//    // Подключение функии прерывания текущего рабочего потока(?)
+//    breakWork = (StepFunction)TransLib.resolve("oiBreakWork");
+//    if(!breakWork)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load BreakWork function!"));
+//    }
+//    getCurResult = (GetResultFunction)TransLib.resolve("oiGetCurResult");
+//    if(!getCurResult)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load GetResult function!"));
+//    }
+//    setStrBuffer = (SetDataBufferFunction)TransLib.resolve("oiSetDataBuffer");
+//    if(!setStrBuffer)
+//    {
+//        QMessageBox::warning(this, tr("Error!"),
+//                             tr("Can't load SetDataBuffer function!"));
+//    }
+//}
+
 void RedactorMainWindow::initWorkTabWidget() {
     ui->tabWidget_2->addTab((new QTextEdit()), "Translate");
     ui->tabWidget_2->setCurrentIndex(0);
@@ -64,20 +119,21 @@ void RedactorMainWindow::initWorkTabWidget() {
     ui->tabWidget_2->setCurrentIndex(0);
 }
 
-//void RedactorMainWindow::linkLib() {
-//    translate = oiTranslate;
-//    retFuncList = oiRetFuncList;
-//    argTranslate = oiArgTranslate;
-//    interpretate = oiInterp;
-//    makeStep = oiMakeStep;
-//    breakWork = oiBreakWork;
-//    getCurResult = oiGetCurResult;
-//    setStrBuffer = oiSetDataBuffer;
-//}
+void RedactorMainWindow::linkLib() {
+    translate = oiTranslate;
+    retFuncList = oiRetFuncList;
+    argTranslate = oiArgTranslate;
+    interpretate = oiInterp;
+    makeStep = oiMakeStep;
+    breakWork = oiBreakWork;
+    getCurResult = oiGetCurResult;
+    setStrBuffer = oiSetDataBuffer;
+}
 
 void RedactorMainWindow::on_actionNew_triggered()
 {
     ui->tabWidget->addTab(new TextForm(), "main.pfg");
+
 }
 
 void RedactorMainWindow::on_tabWidget_tabCloseRequested(int index)
@@ -120,6 +176,7 @@ void RedactorMainWindow::openFile(QString filename) {
     QTextStream in(&file);
     QString text = in.readAll();
     tf->SetText(text);
+    tf->currentFile = filename;
     file.close();
 }
 
@@ -208,53 +265,152 @@ bool RedactorMainWindow::maybeSave() {
 }
 
 
+
 // Транслятор
 
-//void RedactorMainWindow::Translate()
-//{
-//    debug=false;
-//    char* Err=new char[1000];
-//    QString rez="";
-//    int num;
+void RedactorMainWindow::fillList()
+{
+    char* tmp=new char[10000];
+    int num;
+    QString ret;
+    QStringList funcs;
 
-//    transEdit->clear();
+    retFuncList(mModule,tmp,num);
+    ret=QString("%1").arg(tmp);
+    funcs=ret.split('\n');
+    for(int i=0;i<funcs.count();i++)
+        ui->comboBox->addItem(funcs[i]);
+}
 
-//    clearList();
+char* RedactorMainWindow::MakeCharMas(QString text)
+{
+    QChar* QFName = new QChar[1000];
+    char *fname = new char[1000];
+    QFName = text.data();
+    for(int i=0;i<=text.length();i++)
+        ///        fname[i]=QFName[i].toAscii();
+        fname[i] = QFName[i].toLatin1();
+    return fname;
+}
 
-//    if(!this->save())
-//    {
-//        rez = "Please, save file before\n";
-//    }
-//    else
-//    {
-//        rez = QString("Translating %1...\n").arg((this->curFile));
-//        mModule = translate(MakeCharMas(this->curFile),Err,num);
-//        if(num>0)
-//        {
-//            rez += QString("Error in line number %1: %2\n").arg(num).arg(Err);
-//            this->setTranslated(false);
-//        }
-//        else
-//        {
-//            rez += QString("Translation complete\n%1 lines translated\n").arg(-num);
-//            this->setTranslated(true);
-//            fillList();
-//        }
-//    }
-//    transEdit->setText(rez);
-//    workTab->setCurrentWidget(transEdit);
-//}
+void RedactorMainWindow::setTranslated(bool data)
+{
+    TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
+    tf->isTranslated=data;
+}
+
+void RedactorMainWindow::Translate()
+{
+    debug=false;
+    char* Err=new char[1000];
+    QString rez="";
+    int num;
+
+    // transEdit->clear();
+    ui->tabWidget_2->setCurrentIndex(0);
+    //clearList();
+    ui->comboBox->clear();
+    TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
+    QString current_file = tf->currentFile;
+    printf("some");
+    if(!maybeSave())
+    {
+        rez = "Please, save file before\n";
+    }
+    else
+    {
+        rez = QString("Translating %1...\n").arg(current_file);
+        mModule = translate(MakeCharMas(current_file),Err,num);
+        if(num>0)
+        {
+            rez += QString("Error in line number %1: %2\n").arg(num).arg(Err);
+            this->setTranslated(false);
+        }
+        else
+        {
+            rez += QString("Translation complete\n%1 lines translated\n").arg(-num);
+            this->setTranslated(true);
+            fillList();
+        }
+    }
+    ui->tabWidget_2->setCurrentIndex(0);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(rez);
+    // transEdit->setText(rez);
+    ui->tabWidget_2->setCurrentIndex(0);
+    // workTab->setCurrentWidget(transEdit);
+}
+
+void RedactorMainWindow::run(void *inFishka, QString name, bool trace)
+{
+
+    //output=interpretate(inFishka, mModule, MakeCharMas(name), Err, rez, trace);
+
+    /// Новый вариант run, использующий только запуск интерпретатора
+    /// без обращения к главному окну и его компонентам
+    runThread->Set(interpretate, inFishka, mModule, MakeCharMas(name), Err, rez, trace);
+    runThread->start();
+}
+
+void RedactorMainWindow::DebugOrExecute()
+{
+    QString curFuncName;
+    QString argName;
+    bool rez;
+
+    char *Err=new char[1000];
+
+    if(ui->comboBox->currentIndex()==-1)
+    {
+        QMessageBox::warning(this, tr("Error"), tr("Please, select a function"));
+        return;
+    }
+    // Из таба вытаскивается текущая функция
+    curFuncName=ui->comboBox->currentText();
+
+    // Очистка таба результатов. Его подготовка к получению результата
+    //rezEdit->clear();
+    ui->tabWidget_2->setCurrentIndex(3);
+    ((QTextEdit*)ui->tabWidget->currentWidget())->clear();
+
+    // ВЫтаскивается из редактора аргумент
+    ui->tabWidget_2->setCurrentIndex(2);
+    argName = ((QTextEdit*)ui->tabWidget->currentWidget())->toPlainText();
+
+    if(argName.size()>0)
+    {
+        mInFishka = argTranslate(mModule, MakeCharMas(argName), Err, rez);
+        if(!rez)
+        {
+            QMessageBox::warning(this,tr("Argument interpretating error!"),tr(Err));
+            return;
+        }
+    }
+    else
+    {
+        if(ui->comboBox->currentIndex()==0)
+        {
+            QMessageBox::warning(this,tr("Argument interpretating error!"),tr("Empty argument string"));
+            return;
+        }
+    }
+    /// !!! Debug Info...
+    ///qDebug()<< "qDebug(): Succeful argument parsing. Arg = " << argName << " Func = " << curFuncName;
+
+    run(mInFishka, curFuncName, debug);
+    return;
+}
 
 
+void RedactorMainWindow::Execute()
+{
+    debug=false;
+    DebugOrExecute();
+    ui->tabWidget_2->setCurrentIndex(3);
 
-//void RedactorMainWindow::Execute()
-//{
-//    debug=false;
-//    DebugOrExecute();
-//    rezEdit->setText(tr(getCurResult()));
-//    //workTab->setCurrentIndex(3);    // Установка активным таба результатов
-//    workTab->setCurrentWidget(rezEdit);    // Установка активным таба результатов
-//}
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(tr(getCurResult()));
+
+    //workTab->setCurrentIndex(3);    // Установка активным таба результатов    // Установка активным таба результатов
+}
 
 //void RedactorMainWindow::BreakExecute()
 //{
@@ -474,13 +630,18 @@ void RedactorMainWindow::on_actionChoose_dir_triggered()
 
 void RedactorMainWindow::on_actionTranslate_triggered()
 {
+    try {
+        Translate();
+    } catch (std::exception& e)
+    {
 
+    }
 }
 
 
 void RedactorMainWindow::on_actionExecute_triggered()
 {
-
+    Execute();
 }
 
 

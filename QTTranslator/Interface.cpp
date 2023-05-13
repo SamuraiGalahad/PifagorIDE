@@ -4,7 +4,7 @@
 #include "Interface.h"
 void DW(char *s);
 
-extern "C" void* oiTranslate(char* FName, char* Err,int& rez)
+void* oiTranslate(char* FName, char* Err,int& rez)
 {
     /// Debug information
     ///std::cout << "Start of Translator" << std::endl;
@@ -34,7 +34,7 @@ extern "C" void* oiTranslate(char* FName, char* Err,int& rez)
 	return (void*)curMod;
 }
 
-extern "C" void oiRetFuncList(void* curMod, char* fList, int& stringNum)
+void oiRetFuncList(void* curMod, char* fList, int& stringNum)
 {
 	CModule* castedModule;
 	char *tmpList=new char[10000];
@@ -57,7 +57,7 @@ extern "C" void oiRetFuncList(void* curMod, char* fList, int& stringNum)
 
 //-------------------------------------------------------------------------------------------------
 // Функция, осуществляющая трансляцию аргумента
-extern "C" void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez)
+void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez)
 {
     /// Debug information
     ///std::cout << "Start of ArgTranslator" << std::endl;
@@ -104,7 +104,7 @@ extern "C" void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez)
     }
     catch(CExeption Tmp)
     {
-        string Str;
+        std::string Str;
         if(Tmp.m_pContext)
             Str=Tmp.m_sMessage+Tmp.m_pContext->SelfName;
         else
@@ -125,7 +125,7 @@ extern "C" void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez)
     return (void*)InputFishka;
 }
 
-extern "C" char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace)
+char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, bool& rez, bool trace)
 {
     /// Debug information
     ///std::cout << "Start of Interpretator" << std::endl;
@@ -164,8 +164,8 @@ extern "C" char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, b
 	catch(CExeption Tmp)
 	{
 		if(Tmp.m_iErrCode!=19)
-		{
-			string Str;
+        {
+            std::string Str;
 			/*if(Tmp.m_pContext)	
 				Str=Tmp.m_sMessage+Tmp.m_pContext->SelfName;
 			else*/ Str=Tmp.m_sMessage;
@@ -194,23 +194,23 @@ extern "C" char* oiInterp(void* inFishka, void *curMod, char *name, char* Err, b
     return data;
 }
 
-extern "C" void oiMakeStep()
+void oiMakeStep()
 {
     WaitForSignal = false;
 }
 
-extern "C" char* oiGetCurResult()
+char* oiGetCurResult()
 {
 	return data;
 }
 
-extern "C" void oiSetDataBuffer(const char *cStrValue)
+void oiSetDataBuffer(const char *cStrValue)
 {
     strcpy(data, cStrValue);
     return;
 }
 
-extern "C" void  oiBreakWork()
+void  oiBreakWork()
 {
 	StopThread=true;
 }

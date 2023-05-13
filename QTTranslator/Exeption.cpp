@@ -31,7 +31,7 @@ const char *ErrMesTable[ERR_MES_TABLE_SIZE] =
 		"No Error!"
 	};
 
-CExeption::CExeption(CFunction* Context,string Message,int ErrCode) 
+CExeption::CExeption(CFunction* Context,std::string Message,int ErrCode)
 {
 	m_sMessage=Message; 
 	m_pContext=Context; 

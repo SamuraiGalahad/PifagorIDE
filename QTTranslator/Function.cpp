@@ -31,16 +31,16 @@ bool CFunction::GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretat
 //	Tmp->RezFishka=NULL;
 	LocalValTable.push_back(*Tmp);
 
-	vector<CExpression*>::iterator i;
-	map<string, CGeneralObject*, less<string> >::iterator j;
+    std::vector<CExpression*>::iterator i;
+    std::map<std::string, CGeneralObject*, std::less<std::string> >::iterator j;
 
 	bool Rez=true;
 
 	//int Size=NameTable.size();
 
 	for(j=NameTable.begin();j!=NameTable.end();j++)
-	{
-		string name=(*j).first;
+    {
+        std::string name=(*j).first;
 		//CGeneralObject* Obj=(*j).second;
 		Rez&=(*j).second->GetFishka(Arg,Rezult,Trace,Interpretator);
 		AddVal((*j).first,Rezult);
@@ -50,7 +50,7 @@ bool CFunction::GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretat
 		Rez&=(*i)->GetFishka(Arg,Rezult,Trace,Interpretator);
 	}
 
-	vector<TLocalValTableElement>::iterator Iterator;
+    std::vector<TLocalValTableElement>::iterator Iterator;
 	Iterator=LocalValTable.end();
 	Iterator--;
 
@@ -87,7 +87,7 @@ void CFunction::InsertNObject(TNamedObject Object)
 	NameTable.insert(Object);
 }
 
-void* CFunction::GetObject(string Name)
+void* CFunction::GetObject(std::string Name)
 {
 	//CGeneralObject* Obj;
 	if(NameTable.find(Name)!=NameTable.end())
@@ -96,9 +96,9 @@ void* CFunction::GetObject(string Name)
 	return NULL;
 }
 
-bool CFunction::GetVal(string Str,CFishka* &Rezult)
+bool CFunction::GetVal(std::string Str,CFishka* &Rezult)
 {
-	vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 	iter--;
 	if((*iter).LocalValMap.find(Str)!=(*iter).LocalValMap.end())
 	{
@@ -109,11 +109,11 @@ bool CFunction::GetVal(string Str,CFishka* &Rezult)
 	else return ((CBlock*)Owner)->GetVal(Str,Rezult);
 	return false;
 }
-void CFunction::AddVal(string Str,CFishka* Val)
+void CFunction::AddVal(std::string Str,CFishka* Val)
 {
 	if(NameTable.find(Str)!=NameTable.end())
-	{
-		vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
+    {
+        std::vector<TLocalValTableElement>::iterator iter=LocalValTable.end();
 		iter--;
 		(*iter).LocalValMap[Str]=Val;
 	}

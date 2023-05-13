@@ -10,16 +10,16 @@ public:
 	virtual ~CBlock();
 
 	virtual void InsertNObject(TNamedObject Object);
-	virtual void AddElem(CExpression* Expr);
-	virtual void* GetObject(string Name);
-	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
-	virtual bool GetVal(string Str,CFishka* &Rezult);
-	virtual void AddVal(string Str,CFishka* Val);
+    virtual void AddElem(CExpression* Expr);
+    virtual void* GetObject(std::string Name);
+    virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
+    virtual bool GetVal(std::string Str,CFishka* &Rezult);
+    virtual void AddVal(std::string Str,CFishka* Val);
 //	virtual void SetRezFishka(CFishka* Fishka);
 
 	TLocalValTable LocalValTable;
 
-	vector<CExpression*> NoNamedElemList;
+    std::vector<CExpression*> NoNamedElemList;
 	TNameTable NameTable;
 };
 

@@ -28,7 +28,7 @@ void CList::AddElem(CExpression* Expr)
 
 bool CList::GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator)
 {
-	vector<CExpression*>::iterator i;
+    std::vector<CExpression*>::iterator i;
 	int j=0;
 	if(Type==DELAY_LIST)
 	{

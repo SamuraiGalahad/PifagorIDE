@@ -19,7 +19,7 @@ public:
 	void AddTermBeforeEnd(CTerm* Term);
 	virtual bool GetFishka(CFishka* Arg,CFishka* &Rezult,bool &Trace,CInterpretator* Interpretator);
 protected:
-	vector<CTerm*> TermList;
+    std::vector<CTerm*> TermList;
 };
 
 #endif
