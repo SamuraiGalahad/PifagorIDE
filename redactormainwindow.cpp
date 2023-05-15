@@ -20,8 +20,8 @@ RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     ui(new Ui::RedactorMainWindow)
 {
     ui->setupUi(this);
-    ui->tabWidget->addTab(new TextForm(), "main.pyf");
-    QString sPath = "/Users/nikolajparahin/Documents";
+    ui->tabWidget->addTab(new TextForm(), "noname.pfg");
+    QString sPath = "/Users";
     dirmodel = new QFileSystemModel(this);
     QStringList filters;
     filters << "*.pfg";
@@ -115,7 +115,7 @@ void RedactorMainWindow::initWorkTabWidget() {
     ui->tabWidget_2->setCurrentIndex(1);
     ((QTextEdit*)ui->tabWidget_2->currentWidget())->setReadOnly(true);
     ui->tabWidget_2->addTab(new QTextEdit(), "Arguments");
-    ui->tabWidget_2->addTab(new QTextEdit(), "Excecute");
+    ui->tabWidget_2->addTab(new QTextEdit(), "Execute");
     ui->tabWidget_2->setCurrentIndex(3);
     ((QTextEdit*)ui->tabWidget_2->currentWidget())->setReadOnly(true);
     ui->tabWidget_2->setCurrentIndex(0);
@@ -169,6 +169,7 @@ QString RedactorMainWindow::getTextFromCurrentTab() {
 
 void RedactorMainWindow::openFile(QString filename) {
     QFile file(filename);
+
     currentFile = filename;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot open file!");
@@ -184,7 +185,11 @@ void RedactorMainWindow::openFile(QString filename) {
 
 void RedactorMainWindow::on_actionOpen_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Open the file");
+    QStringList filter;
+    filter << "*.pfg";
+    QStringList l = dirmodel->rootDirectory().entryList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
+    filter += l;
+    QString filename = QFileDialog::getOpenFileName(this, "Open the file", "", "*pfg");
     openFile(filename);
 }
 
@@ -221,7 +226,16 @@ void RedactorMainWindow::on_actionSave_triggered()
         on_actionSave_as_triggered();
         tf->wasSavedAs = true;
     } else {
-
+        QString current_file = tf->currentFile;
+        QFile file(current_file);
+        QTextStream out(&file);
+        QString text = getTextFromCurrentTab();
+        out << text;
+        file.close();
+        TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
+        int current_index = ui->tabWidget->currentIndex();
+        ui->tabWidget->setTabText(current_index, current_file);
+        tf->wasSavedAs = true;
     }
 }
 
@@ -314,13 +328,16 @@ void RedactorMainWindow::Translate()
     ui->comboBox->clear();
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     QString current_file = tf->currentFile;
-    printf("some");
     if(!maybeSave())
     {
         rez = "Please, save file before\n";
     }
     else
     {
+        if (tf->GetCurrentText().size() == 0) {
+            QMessageBox::warning(this,"Now nothing in file!","Now nothing in file!");
+            return;
+        }
         rez = QString("Translating %1...\n").arg(current_file);
         mModule = translate(MakeCharMas(current_file),Err,num);
         if(num>0)
@@ -625,22 +642,36 @@ void RedactorMainWindow::on_actionTranslate_triggered()
 {
     try {
         Translate();
-    } catch (std::exception& e)
+    } catch (...)
     {
-
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Translation!");
+        warning.exec();
     }
 }
 
 
 void RedactorMainWindow::on_actionExecute_triggered()
 {
-    Execute();
+    try {
+        Execute();
+    } catch (...)
+    {
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Execution!");
+        warning.exec();
+    }
+
 }
 
 
 void RedactorMainWindow::on_actionBreak_execution_triggered()
 {
-    BreakExecute();
+    try {
+        BreakExecute();
+    } catch (...)
+    {
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Breaking Execution Action!");
+    }
+
 }
 
 
@@ -689,6 +720,8 @@ void RedactorMainWindow::closeEvent(QCloseEvent *event) {
             }
         }
         par->close();
+    } else {
+        event->ignore();
     }
 }
 
