@@ -43,7 +43,6 @@ RedactorMainWindow::RedactorMainWindow(QWidget *ap, QWidget* parent) :
     rez = true;
     Err=new char[1000];
     output=new char[1000000];
-
     connect(runThread, SIGNAL(finished()), this, SLOT(ThreadFinshed()));
 }
 
@@ -134,7 +133,7 @@ void RedactorMainWindow::linkLib() {
 
 void RedactorMainWindow::on_actionNew_triggered()
 {
-    ui->tabWidget->addTab(new TextForm(), "main.pfg");
+    ui->tabWidget->addTab(new TextForm(), "noname.pfg");
 
 }
 
@@ -173,6 +172,7 @@ void RedactorMainWindow::openFile(QString filename) {
     currentFile = filename;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot open file!");
+        return;
     }
     createNewTabAndSetToNew(filename);
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
@@ -181,6 +181,7 @@ void RedactorMainWindow::openFile(QString filename) {
     tf->SetText(text);
     tf->currentFile = filename;
     file.close();
+    tf->wasSavedAs = true;
 }
 
 void RedactorMainWindow::on_actionOpen_triggered()
@@ -210,6 +211,7 @@ void RedactorMainWindow::on_actionSave_as_triggered()
     int current_index = ui->tabWidget->currentIndex();
     ui->tabWidget->setTabText(current_index, fileName);
     tf->wasSavedAs = true;
+    tf->ui->plainTextEdit->document()->modificationChanged(false);
 }
 
 void RedactorMainWindow::on_actionNew_Window_triggered()
@@ -226,6 +228,9 @@ void RedactorMainWindow::on_actionSave_triggered()
         on_actionSave_as_triggered();
         tf->wasSavedAs = true;
     } else {
+        if (!tf->ui->plainTextEdit->document()->isModified()) {
+            return;
+        }
         QString current_file = tf->currentFile;
         QFile file(current_file);
         QTextStream out(&file);
@@ -235,7 +240,7 @@ void RedactorMainWindow::on_actionSave_triggered()
         TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
         int current_index = ui->tabWidget->currentIndex();
         ui->tabWidget->setTabText(current_index, current_file);
-        tf->wasSavedAs = true;
+        tf->ui->plainTextEdit->document()->modificationChanged(false);
     }
 }
 
@@ -315,6 +320,13 @@ void RedactorMainWindow::setTranslated(bool data)
     tf->isTranslated=data;
 }
 
+bool RedactorMainWindow::isInFileSystem() {
+    TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
+    QString file_path = tf->currentFile;
+    QFileInfo file(file_path);
+    return file.exists() && file.isFile();
+}
+
 void RedactorMainWindow::Translate()
 {
     debug=false;
@@ -328,6 +340,9 @@ void RedactorMainWindow::Translate()
     ui->comboBox->clear();
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     QString current_file = tf->currentFile;
+    if (!isInFileSystem()) {
+        this->setWindowTitle(currentFile);
+    }
     if(!maybeSave())
     {
         rez = "Please, save file before\n";
@@ -434,7 +449,7 @@ void RedactorMainWindow::Execute()
 void RedactorMainWindow::BreakExecute()
 {
     isBroken=true;
-    breakWork();
+    oiBreakWork();
 }
 
 //void RedactorMainWindow::Debug()

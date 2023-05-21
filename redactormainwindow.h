@@ -108,6 +108,8 @@ private:
     void createNewTabAndSetToNew();
     QString getTextFromCurrentTab();
     bool maybeSave();
+    bool getWasSavedFlag();
+    bool isInFileSystem();
     void linkLib();
     MyThread *runThread;
 
