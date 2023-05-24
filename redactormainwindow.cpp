@@ -412,7 +412,7 @@ void RedactorMainWindow::DebugOrExecute()
     // ВЫтаскивается из редактора аргумент
     ui->tabWidget_2->setCurrentIndex(2);
     argName = ((QTextEdit*)ui->tabWidget_2->currentWidget())->toPlainText();
-
+    ui->tabWidget_2->setCurrentIndex(3);
     if(argName.size()>0)
     {
         mInFishka = argTranslate(mModule, MakeCharMas(argName), Err, rez);
@@ -455,48 +455,52 @@ void RedactorMainWindow::BreakExecute()
     oiBreakWork();
 }
 
-//void RedactorMainWindow::Debug()
-//{
-//    workTab->setCurrentWidget(debugEdit);    // Установка активным отладочного таба
-//    /// Debug Info
-//    ///qDebug() << "Debug(): debug = " << (debug? "true":"false");
+void RedactorMainWindow::Debug()
+{
+    ui->tabWidget_2->setCurrentIndex(1);   // Установка активным отладочного таба
+    /// Debug Info
+    ///qDebug() << "Debug(): debug = " << (debug? "true":"false");
 
-//    if(debug)   // Отладка уже идет. Продолжаем...
-//    {
-//        makeStep();
-//        /// Debug Info
-//        ///qDebug() << "Debug(): WaitForSignal = false";
-//    }
-//    else    //if(!debug)    // Отладка только началась. Запускаем интерпретатор...
-//    {
-//        // Вытаскиваются аргумент и текущая функция
-//        ///QString tmpStr = argEdit->toPlainText() + " : " + funcList->currentItem()->text();
-//        ///const char* tmpStrBuf = tmpStr.toLocal8Bit().data();
-//        /// Debug Info
-//        ///qDebug() << "Debug(): tmpStr = " << tmpStr;
-//        //debugEdit->setText(tmpStr);
-//        ///setStrBuffer(tmpStrBuf);
-//        // Очистка таба результатов. Его подготовка к получению результата
-//        rezEdit->clear();
+    if(debug)   // Отладка уже идет. Продолжаем...
+    {
+        makeStep();
+        /// Debug Info
+        ///qDebug() << "Debug(): WaitForSignal = false";
+    }
+    else    //if(!debug)    // Отладка только началась. Запускаем интерпретатор...
+    {
+        // Вытаскиваются аргумент и текущая функция
+        ///QString tmpStr = argEdit->toPlainText() + " : " + funcList->currentItem()->text();
+        ///const char* tmpStrBuf = tmpStr.toLocal8Bit().data();
+        /// Debug Info
+        ///qDebug() << "Debug(): tmpStr = " << tmpStr;
+        //debugEdit->setText(tmpStr);
+        ///setStrBuffer(tmpStrBuf);
+        // Очистка таба результатов. Его подготовка к получению результата
+        //rezEdit->clear();
+        ui->tabWidget_2->setCurrentIndex(3);
+        ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText("");
 
-//        debug=true;
-//        // Запуск интерпретатора
-//        DebugOrExecute();
-//    }
-//    debugEdit->setText(tr(getCurResult())); // Выдается в отладочное окно результат очередного шага.
-//    // Фокус смещается на последнюю позицию
-//    QTextCursor c = debugEdit->textCursor();
-//    c.movePosition(QTextCursor::End);
-//    debugEdit->setTextCursor(c);
-//}
+        debug=true;
+        // Запуск интерпретатора
+        DebugOrExecute();
+    }
+    ui->tabWidget_2->setCurrentIndex(1);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(tr(getCurResult())); // Выдается в отладочное окно результат очередного шага.
+    // Фокус смещается на последнюю позицию
+    QTextCursor c = ((QTextEdit*)ui->tabWidget_2->currentWidget())->textCursor();
+    c.movePosition(QTextCursor::End);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->setTextCursor(c);
+}
 
-//void RedactorMainWindow::BreakDebug()
-//{
-//    isBroken=true;
-//    breakWork();
-//    // Очистка отладочного окна
-//    debugEdit->clear();
-//}
+void RedactorMainWindow::BreakDebug()
+{
+    isBroken=true;
+    breakWork();
+    // Очистка отладочного окна
+    ui->tabWidget_2->setCurrentIndex(1);
+    ((QTextEdit*)ui->tabWidget_2->currentWidget())->clear();
+}
 
 //void RedactorMainWindow::DebugOrExecute()
 //{
@@ -570,7 +574,7 @@ void RedactorMainWindow::ThreadFinshed() {
         {
             //execTextFromThread=tr(output);
             //SetRez(3);
-            ui->tabWidget_2->setCurrentIndex(2);
+            ui->tabWidget_2->setCurrentIndex(3);
             ((QTextEdit*)ui->tabWidget_2->currentWidget())->setText(tr(getCurResult()));
             //workTab->setCurrentWidget(rezEdit);
 
@@ -688,6 +692,7 @@ void RedactorMainWindow::on_actionBreak_execution_triggered()
     } catch (...)
     {
         QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Breaking Execution Action!");
+        warning.exec();
     }
 
 }
@@ -695,19 +700,37 @@ void RedactorMainWindow::on_actionBreak_execution_triggered()
 
 void RedactorMainWindow::on_actionDebug_triggered()
 {
-
+    try {
+        Debug();
+    } catch (...)
+    {
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Debug Action!");
+        warning.exec();
+    }
 }
 
 
 void RedactorMainWindow::on_actionBreak_Debug_triggered()
 {
-
+    try {
+        BreakDebug();
+    } catch (...)
+    {
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Break Debug Action!");
+        warning.exec();
+    }
 }
 
 
 void RedactorMainWindow::on_actionNext_step_triggered()
 {
-
+    try {
+        Debug();
+    } catch (...)
+    {
+        QMessageBox warning = QMessageBox(QMessageBox::Warning, "...", "Exception while Debug Action!");
+        warning.exec();
+    }
 }
 
 

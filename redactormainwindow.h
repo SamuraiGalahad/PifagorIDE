@@ -213,6 +213,11 @@ private slots:
      */
     void on_treeView_doubleClicked(const QModelIndex &index);
 
+    /**
+     * @brief ThreadFinshed -- закрытие потока.
+     */
+    void ThreadFinshed();
+
  //   void on_treeView_clicked(const QModelIndex &index);
 
 private:
@@ -351,11 +356,6 @@ private:
      * @param trace
      */
     void run(void *inFishka, QString name, bool trace);
-
-    /**
-     * @brief ThreadFinshed -- закрытие потока.
-     */
-    void ThreadFinshed();
 
     /**
      * @brief fillList -- заполнение комбобокса со списком функции.
