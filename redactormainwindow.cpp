@@ -169,7 +169,6 @@ QString RedactorMainWindow::getTextFromCurrentTab() {
 void RedactorMainWindow::openFile(QString filename) {
     QFile file(filename);
 
-    currentFile = filename;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot open file!");
         return;
@@ -202,8 +201,7 @@ void RedactorMainWindow::on_actionSave_as_triggered()
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
     }
-    currentFile = fileName;
-    QTextStream out(&file);
+    QDataStream out(&file);
     QString text = getTextFromCurrentTab();
     out << text;
     file.close();
@@ -212,6 +210,7 @@ void RedactorMainWindow::on_actionSave_as_triggered()
     ui->tabWidget->setTabText(current_index, fileName);
     tf->wasSavedAs = true;
     tf->ui->plainTextEdit->document()->modificationChanged(false);
+    tf->currentFile = file.fileName();
 }
 
 void RedactorMainWindow::on_actionNew_Window_triggered()
@@ -226,11 +225,8 @@ void RedactorMainWindow::on_actionSave_triggered()
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     if (tf->wasSavedAs == false) {
         on_actionSave_as_triggered();
-        tf->wasSavedAs = true;
     } else {
-        if (!tf->ui->plainTextEdit->document()->isModified()) {
-            return;
-        }
+        this->setWindowTitle("Here");
         QString current_file = tf->currentFile;
         QFile file(current_file);
         QTextStream out(&file);
@@ -341,7 +337,7 @@ void RedactorMainWindow::Translate()
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     QString current_file = tf->currentFile;
     if (!isInFileSystem()) {
-        this->setWindowTitle(currentFile);
+        this->setWindowTitle(current_file);
     }
     if(!maybeSave())
     {

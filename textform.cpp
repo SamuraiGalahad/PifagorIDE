@@ -21,6 +21,7 @@ TextForm::~TextForm()
 }
 
 QString TextForm::GetCurrentText() {
+    ui->plainTextEdit->setPlainText(ui->plainTextEdit->toPlainText());
     return ui->plainTextEdit->toPlainText();
 }
 

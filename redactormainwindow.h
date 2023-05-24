@@ -103,7 +103,6 @@ private:
 
     void initWorkTabWidget();
 
-    QString currentFile;
     void createNewTabAndSetToNew(QString name);
     void createNewTabAndSetToNew();
     QString getTextFromCurrentTab();
