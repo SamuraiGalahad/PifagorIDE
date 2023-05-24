@@ -6,6 +6,7 @@
 #include "QTTranslator/Interface.h"
 #include "mainwindow.h"
 
+
 extern void* oiTranslate(char* FName, char* Err,int& rez);
 extern void  oiRetFuncList(void* curMod, char* fList, int& stringNum);
 extern void* oiArgTranslate(void* curMod, char* arg, char* Err, bool& rez);
@@ -196,21 +197,24 @@ void RedactorMainWindow::on_actionOpen_triggered()
 void RedactorMainWindow::on_actionSave_as_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Save as");
+    this->setWindowTitle(fileName);
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
     }
-    QDataStream out(&file);
+    QTextStream out(&file);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     QString text = getTextFromCurrentTab();
     out << text;
+    QApplication::restoreOverrideCursor();
     file.close();
     TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
     int current_index = ui->tabWidget->currentIndex();
     ui->tabWidget->setTabText(current_index, fileName);
     tf->wasSavedAs = true;
     tf->ui->plainTextEdit->document()->modificationChanged(false);
-    tf->currentFile = file.fileName();
+    tf->currentFile = fileName;
 }
 
 void RedactorMainWindow::on_actionNew_Window_triggered()
@@ -226,11 +230,14 @@ void RedactorMainWindow::on_actionSave_triggered()
     if (tf->wasSavedAs == false) {
         on_actionSave_as_triggered();
     } else {
-        this->setWindowTitle("Here");
         QString current_file = tf->currentFile;
         QFile file(current_file);
-        QTextStream out(&file);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            return;
+        }
         QString text = getTextFromCurrentTab();
+        QTextStream out(&file);
         out << text;
         file.close();
         TextForm* tf = (TextForm*)ui->tabWidget->currentWidget();
